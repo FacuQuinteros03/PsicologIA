@@ -1,0 +1,93 @@
+/* Tabla compacta. El contenedor scrollea en horizontal por su cuenta para que
+   la página nunca lo haga. */
+
+.contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-base);
+}
+
+.tabla th {
+  height: var(--alto-control);
+  padding: 0 var(--e-3);
+  text-align: left;
+  white-space: nowrap;
+
+  background: var(--superficie-2);
+  border-bottom: 1px solid var(--borde);
+
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+  font-weight: var(--peso-medio);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tabla td {
+  height: var(--alto-fila);
+  padding: 0 var(--e-3);
+  border-bottom: 1px solid var(--borde);
+  color: var(--texto);
+  vertical-align: middle;
+}
+
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Fila clickeable: sirve como link de detalle. Se navega con Tab y Enter
+   porque lleva `tabindex` y handler de teclado en el componente. */
+.filaInteractiva {
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.filaInteractiva:hover td {
+  background: var(--superficie-2);
+}
+
+.filaInteractiva:focus-visible {
+  outline: var(--foco-grosor) solid var(--foco);
+  outline-offset: calc(var(--foco-grosor) * -1);
+}
+
+/* Columna de acciones: se revelan al hover o al enfocar la fila, pero el
+   espacio está reservado siempre para que nada se mueva. */
+.acciones {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.accionesInternas {
+  display: inline-flex;
+  gap: var(--e-1);
+  opacity: 0;
+  transition: opacity var(--transicion);
+}
+
+.filaInteractiva:hover .accionesInternas,
+.filaInteractiva:focus-within .accionesInternas {
+  opacity: 1;
+}
+
+.numerica {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.derecha {
+  text-align: right;
+}
+
+.vacio {
+  padding: var(--e-6) var(--e-4);
+  text-align: center;
+  color: var(--texto-3);
+  font-size: var(--t-base);
+}

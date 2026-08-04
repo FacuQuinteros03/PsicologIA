@@ -1,0 +1,139 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-4);
+  height: 100%;
+  min-height: 0;
+  padding: var(--e-4);
+}
+
+.centro {
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+/* --- Encabezado ----------------------------------------------------------- */
+
+.encabezado {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'identidad acciones'
+    'motivo    acciones';
+  align-items: center;
+  gap: var(--e-1) var(--e-4);
+  flex: 0 0 auto;
+}
+
+.identidad {
+  grid-area: identidad;
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+}
+
+.titulo {
+  font-size: var(--t-xl);
+}
+
+.motivo {
+  grid-area: motivo;
+  max-width: 90ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--texto-2);
+  font-size: var(--t-base);
+}
+
+.accionesEncabezado {
+  grid-area: acciones;
+}
+
+/* --- Grilla del workspace -------------------------------------------------
+   Dos columnas: la izquierda apila genograma e historial, la derecha es el
+   panel de detalle a lo alto. */
+
+.grilla {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-rows: minmax(280px, 1fr) minmax(220px, 0.85fr);
+  grid-template-areas:
+    'genograma lateral'
+    'historial lateral';
+  gap: var(--e-4);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.panelGenograma {
+  grid-area: genograma;
+  min-height: 0;
+}
+
+.panelLateral {
+  grid-area: lateral;
+  min-height: 0;
+}
+
+.panelHistorial {
+  grid-area: historial;
+  min-height: 0;
+}
+
+/* En pantallas angostas se pasa a una sola columna y la página scrollea. */
+@media (max-width: 1000px) {
+  .grilla {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 420px 320px 420px;
+    grid-template-areas:
+      'genograma'
+      'lateral'
+      'historial';
+  }
+
+  .pagina {
+    height: auto;
+  }
+}
+
+/* --- Historial ------------------------------------------------------------ */
+
+.buscador {
+  width: 220px;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-1);
+  padding: var(--e-2) var(--e-3);
+  border-bottom: 1px solid var(--borde);
+}
+
+.resumen {
+  display: block;
+  max-width: 70ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--texto-2);
+}
+
+.pendiente {
+  color: var(--texto-3);
+  font-style: normal;
+}
+
+.tagsFila {
+  display: flex;
+  align-items: center;
+  gap: var(--e-1);
+}
+
+.mas {
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+}

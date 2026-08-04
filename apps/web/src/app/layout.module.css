@@ -1,0 +1,36 @@
+/* El marco ocupa exactamente el viewport: el scroll pasa dentro de cada panel,
+   no en la página. Es lo que permite que el genograma tenga altura concreta. */
+.marco {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.contenido {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Enlace de salto: fuera de pantalla hasta recibir foco por teclado. */
+.saltar {
+  position: absolute;
+  top: var(--e-2);
+  left: var(--e-2);
+  z-index: 100;
+
+  padding: var(--e-2) var(--e-3);
+  background: var(--acento);
+  border-radius: var(--r-2);
+  color: var(--sobre-acento);
+  font-size: var(--t-sm);
+  font-weight: var(--peso-medio);
+
+  transform: translateY(-200%);
+}
+
+.saltar:focus {
+  transform: translateY(0);
+  text-decoration: none;
+}

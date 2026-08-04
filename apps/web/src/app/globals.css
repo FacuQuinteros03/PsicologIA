@@ -1,49 +1,249 @@
+/* =============================================================================
+   PsicoIA — Design tokens
+   =============================================================================
+
+   ESTE ES EL ÚNICO LUGAR DONDE SE DEFINEN COLORES, ESPACIOS Y TIPOGRAFÍA.
+
+   Ningún componente escribe un color literal: todos leen de estas variables.
+   Si querés cambiar el acento de toda la app, cambiás una línea acá abajo.
+   Si querés que los botones sean más altos, cambiás `--alto-control`.
+
+   Criterios del sistema:
+   - Densidad alta: tamaños chicos, espaciado ajustado, controles de 30px.
+   - Bordes 1px sólidos. Sin sombras difusas ni blur.
+   - Fondos sólidos y neutros. Sin gradientes.
+   - Un solo acento semántico; el resto del color se reserva para estado.
+   - Radios chicos (máximo 8px). Nada redondeado en exceso.
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Neutros ------------------------------------------------------------
+     La escala va de fondo a texto. `superficie-2` es para zonas hundidas
+     (headers de tabla, barras); `superficie-3` es hover. */
+  --fondo: #ffffff;
+  --superficie: #ffffff;
+  --superficie-2: #f6f6f7;
+  --superficie-3: #ededef;
+
+  --borde: #e2e2e5;
+  --borde-fuerte: #c6c6cc;
+
+  --texto: #17171a;
+  --texto-2: #55555f;
+  --texto-3: #8a8a94;
+
+  /* --- Acento (uno solo) --------------------------------------------------
+     Teal: legible sobre blanco y sobre negro, se lee como clínico sin caer
+     en el azul corporativo. Cambiá estas tres líneas y cambia toda la app. */
+  --acento: #0f766e;
+  --acento-hover: #115e59;
+  --acento-suave: #eff9f7;
+  --acento-borde: #99d5cd;
+  --sobre-acento: #ffffff;
+
+  /* --- Estado -------------------------------------------------------------
+     No son "acentos": se usan sólo para comunicar estado (badges, vínculos
+     del genograma, prioridad de recordatorios). */
+  --exito: #15803d;
+  --exito-suave: #f0fdf4;
+  --exito-borde: #a7d8b6;
+
+  --alerta: #b45309;
+  --alerta-suave: #fffbeb;
+  --alerta-borde: #e8ce93;
+
+  --peligro: #b3261e;
+  --peligro-suave: #fef2f2;
+  --peligro-borde: #edb4b0;
+
+  --neutro-estado: #55555f;
+  --neutro-suave: #f6f6f7;
+
+  /* --- Foco ---------------------------------------------------------------
+     Navegación por teclado: el foco tiene que verse SIEMPRE y no mover nada.
+     Por eso `outline` (que no ocupa espacio) y no `border`. */
+  --foco: var(--acento);
+  --foco-grosor: 2px;
+  --foco-separacion: 1px;
+
+  /* --- Tipografía ---------------------------------------------------------
+     Escala compacta: 13px es el cuerpo. Los UI densos se leen mejor chicos. */
+  --fuente: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --fuente-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --t-xs: 11px;
+  --t-sm: 12px;
+  --t-base: 13px;
+  --t-md: 14px;
+  --t-lg: 16px;
+  --t-xl: 20px;
+  --t-xxl: 26px;
+
+  --peso-normal: 400;
+  --peso-medio: 500;
+  --peso-fuerte: 600;
+
+  --interlinea-ajustada: 1.25;
+  --interlinea: 1.5;
+
+  /* --- Espaciado (base 4px) ---------------------------------------------- */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+
+  /* --- Formas ------------------------------------------------------------- */
+  --r-1: 3px;
+  --r-2: 5px;
+  --r-3: 8px;
+  --borde-fino: 1px solid var(--borde);
+
+  /* --- Alturas fijas ------------------------------------------------------
+     Fijas a propósito: sin layout shift cuando cambia el contenido. */
+  --alto-control: 30px;
+  --alto-control-sm: 24px;
+  --alto-fila: 36px;
+  --alto-barra: 48px;
+
+  /* --- Movimiento ---------------------------------------------------------
+     Sólo para feedback de interacción (hover, foco). Nada decorativo. */
+  --transicion: 100ms ease-out;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --fondo: #0c0c0e;
+    --superficie: #141417;
+    --superficie-2: #1b1b1f;
+    --superficie-3: #26262c;
+
+    --borde: #2b2b32;
+    --borde-fuerte: #414149;
+
+    --texto: #ececef;
+    --texto-2: #a0a0aa;
+    --texto-3: #71717c;
+
+    --acento: #14b8a6;
+    --acento-hover: #2dd4bf;
+    --acento-suave: #10201f;
+    --acento-borde: #1d5c56;
+    --sobre-acento: #06201d;
+
+    --exito: #4ade80;
+    --exito-suave: #102117;
+    --exito-borde: #235c39;
+
+    --alerta: #fbbf24;
+    --alerta-suave: #241c0c;
+    --alerta-borde: #6b501a;
+
+    --peligro: #f87171;
+    --peligro-suave: #26130f;
+    --peligro-borde: #6e2f2c;
+
+    --neutro-estado: #a0a0aa;
+    --neutro-suave: #1b1b1f;
   }
 }
 
-html {
-  height: 100%;
-}
+/* =============================================================================
+   Reset y base
+   ========================================================================== */
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Sin scroll horizontal nunca: el contenido ancho scrollea en su contenedor. */
+  overflow-x: hidden;
+  /* Reserva la barra de scroll para que abrirla no corra el layout. */
+  scrollbar-gutter: stable;
+}
+
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--fuente);
+  font-size: var(--t-base);
+  line-height: var(--interlinea);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Todo lo numérico alineado en columna: cifras del mismo ancho. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Visible sólo para lectores de pantalla. Para encabezados de columna que no
+   llevan texto, atajos y etiquetas de contexto. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+h1, h2, h3, h4 {
+  font-weight: var(--peso-fuerte);
+  line-height: var(--interlinea-ajustada);
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
 }
 
 a {
-  color: inherit;
+  color: var(--acento);
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+a:hover {
+  text-decoration: underline;
+}
+
+/* Foco visible y consistente en toda la app. Sólo con teclado, para no
+   ensuciar el click con mouse. */
+:focus-visible {
+  outline: var(--foco-grosor) solid var(--foco);
+  outline-offset: var(--foco-separacion);
+  border-radius: var(--r-1);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Respeta a quien pidió menos movimiento a nivel sistema operativo. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

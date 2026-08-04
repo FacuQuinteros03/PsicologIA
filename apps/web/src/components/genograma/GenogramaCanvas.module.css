@@ -1,0 +1,67 @@
+/* React Flow necesita que el contenedor tenga altura concreta: con `height:
+   100%` sobre un padre sin altura, el canvas mide 0 y no se ve nada. */
+.lienzo {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  background: var(--fondo);
+}
+
+/* Los estilos internos de React Flow son clases globales, así que desde un
+   módulo hay que envolverlas en :global para poder sobrescribirlas. */
+.lienzo :global(.react-flow__controls) {
+  box-shadow: none;
+  border: 1px solid var(--borde);
+  border-radius: var(--r-2);
+  overflow: hidden;
+}
+
+.lienzo :global(.react-flow__controls-button) {
+  width: 26px;
+  height: 26px;
+  background: var(--superficie);
+  border: none;
+  border-bottom: 1px solid var(--borde);
+  color: var(--texto-2);
+  transition: background-color var(--transicion);
+}
+
+.lienzo :global(.react-flow__controls-button:last-child) {
+  border-bottom: none;
+}
+
+.lienzo :global(.react-flow__controls-button:hover) {
+  background: var(--superficie-3);
+}
+
+.lienzo :global(.react-flow__controls-button svg) {
+  fill: currentColor;
+  max-width: 12px;
+  max-height: 12px;
+}
+
+.lienzo :global(.react-flow__attribution) {
+  background: transparent;
+  font-size: var(--t-xs);
+}
+
+.lienzo :global(.react-flow__attribution a) {
+  color: var(--texto-3);
+}
+
+/* El nodo custom trae su propio marco: se anulan el fondo y el borde que
+   React Flow aplica por defecto. */
+.lienzo :global(.react-flow__node) {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: var(--fuente);
+}
+
+.lienzo :global(.react-flow__node.selected) {
+  box-shadow: none;
+}
+
+.lienzo :global(.react-flow__edge-text) {
+  font-family: var(--fuente);
+}

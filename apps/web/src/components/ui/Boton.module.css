@@ -1,0 +1,130 @@
+/* Botón. Todos los valores salen de los tokens de `app/globals.css`. */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-2);
+
+  height: var(--alto-control);
+  padding: 0 var(--e-3);
+
+  border: 1px solid transparent;
+  border-radius: var(--r-2);
+
+  font-size: var(--t-base);
+  font-weight: var(--peso-medio);
+  line-height: 1;
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion),
+    color var(--transicion);
+}
+
+.boton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Variantes ----------------------------------------------------------- */
+
+.primario {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: var(--sobre-acento);
+}
+.primario:hover:not(:disabled) {
+  background: var(--acento-hover);
+  border-color: var(--acento-hover);
+}
+
+.secundario {
+  background: var(--superficie);
+  border-color: var(--borde);
+  color: var(--texto);
+}
+.secundario:hover:not(:disabled) {
+  background: var(--superficie-2);
+  border-color: var(--borde-fuerte);
+}
+
+.sutil {
+  background: transparent;
+  border-color: transparent;
+  color: var(--texto-2);
+}
+.sutil:hover:not(:disabled) {
+  background: var(--superficie-3);
+  color: var(--texto);
+}
+
+.peligro {
+  background: var(--superficie);
+  border-color: var(--peligro-borde);
+  color: var(--peligro);
+}
+.peligro:hover:not(:disabled) {
+  background: var(--peligro-suave);
+  border-color: var(--peligro);
+}
+
+/* --- Tamaños ------------------------------------------------------------- */
+
+.sm {
+  height: var(--alto-control-sm);
+  padding: 0 var(--e-2);
+  font-size: var(--t-sm);
+  gap: var(--e-1);
+}
+
+.md {
+  /* Valores del bloque base. Existe para poder sobrescribirlo por si acaso. */
+  height: var(--alto-control);
+}
+
+.bloque {
+  width: 100%;
+}
+
+/* --- Interior ------------------------------------------------------------ */
+
+.icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Ancho fijo: el texto no se mueve al alternar icono/indicador. */
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
+.icono svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.etiqueta {
+  display: inline-block;
+}
+
+/* Indicador de carga: un aro que gira. Es feedback de estado, no decoración,
+   así que se mantiene aunque el sistema pida menos movimiento (sólo se frena). */
+.indicador {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: girar 600ms linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}

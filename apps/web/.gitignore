@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# La plantilla sí se versiona: documenta qué variables hacen falta y no lleva
+# ningún valor real. Todo lo NEXT_PUBLIC_ termina en el bundle del navegador,
+# así que acá nunca va un secreto.
+!.env.local.example
 
 # vercel
 .vercel

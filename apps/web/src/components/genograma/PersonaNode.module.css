@@ -1,0 +1,143 @@
+/* Nodo del genograma. Semiótica clásica: cuadrado = masculino,
+   círculo = femenino, hexágono = no binario, rombo = desconocido,
+   cruz diagonal = fallecido, doble borde = persona consultante. */
+
+.nodo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e-1);
+  /* Ancho fijo: las etiquetas largas no deforman el grafo. */
+  width: 96px;
+}
+
+.figura {
+  position: relative;
+  width: 44px;
+  height: 44px;
+
+  background: var(--superficie);
+  border: 1px solid var(--borde-fuerte);
+
+  transition:
+    border-color var(--transicion),
+    background-color var(--transicion);
+}
+
+.cuadrado {
+  border-radius: var(--r-1);
+}
+
+.circulo {
+  border-radius: 50%;
+}
+
+.hexagono {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  /* clip-path recorta el borde, así que el contorno se simula con el fondo. */
+  border: none;
+  background: var(--borde-fuerte);
+}
+
+.hexagono::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: var(--superficie);
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.rombo {
+  transform: rotate(45deg);
+  border-radius: var(--r-1);
+}
+
+/* El nodo del propio paciente lleva doble contorno. */
+.indice {
+  border-color: var(--acento);
+  box-shadow: inset 0 0 0 2px var(--superficie), inset 0 0 0 3px var(--acento);
+}
+
+.hexagono.indice {
+  background: var(--acento);
+  box-shadow: none;
+}
+
+.seleccionado {
+  border-color: var(--acento);
+  background: var(--acento-suave);
+}
+
+.hexagono.seleccionado {
+  background: var(--acento);
+}
+
+.hexagono.seleccionado::after {
+  background: var(--acento-suave);
+}
+
+/* Cruz diagonal de fallecimiento: dos líneas cruzadas sobre la figura. */
+.fallecido {
+  border-color: var(--texto-3);
+}
+
+.cruz {
+  position: absolute;
+  inset: -3px;
+  pointer-events: none;
+}
+
+.cruz::before,
+.cruz::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--texto-2);
+}
+
+.cruz::before {
+  transform: rotate(45deg);
+}
+
+.cruz::after {
+  transform: rotate(-45deg);
+}
+
+.textos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+}
+
+.etiqueta {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--texto);
+  font-size: var(--t-sm);
+  font-weight: var(--peso-medio);
+  line-height: var(--interlinea-ajustada);
+}
+
+.rol {
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+  line-height: var(--interlinea-ajustada);
+}
+
+/* Los puertos de conexión no se usan para dibujar a mano en el MVP:
+   se dejan invisibles pero presentes, que es lo que React Flow necesita. */
+.puerto {
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+  border: none;
+}

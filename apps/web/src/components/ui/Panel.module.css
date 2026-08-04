@@ -1,0 +1,68 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* permite que el cuerpo scrollee dentro de un flex padre */
+
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--r-3);
+  /* Sin box-shadow: la jerarquía la da el borde, no una sombra difusa. */
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+
+  height: var(--alto-barra);
+  padding: 0 var(--e-4);
+  flex: 0 0 auto;
+
+  background: var(--superficie-2);
+  border-bottom: 1px solid var(--borde);
+  border-radius: var(--r-3) var(--r-3) 0 0;
+}
+
+.tituloZona {
+  display: flex;
+  align-items: baseline;
+  gap: var(--e-2);
+  min-width: 0;
+}
+
+.titulo {
+  font-size: var(--t-md);
+  font-weight: var(--peso-fuerte);
+  color: var(--texto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-size: var(--t-sm);
+  color: var(--texto-3);
+  white-space: nowrap;
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  flex: 0 0 auto;
+}
+
+.cuerpo {
+  padding: var(--e-4);
+  min-height: 0;
+}
+
+.sinPadding {
+  padding: 0;
+}
+
+.scroll {
+  overflow-y: auto;
+  flex: 1 1 auto;
+}

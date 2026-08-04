@@ -1,0 +1,79 @@
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.area {
+  flex: 1 1 auto;
+  min-height: 200px;
+  width: 100%;
+  padding: var(--e-4);
+  resize: none;
+
+  background: var(--superficie);
+  border: none;
+  border-radius: 0;
+
+  color: var(--texto);
+  font-family: var(--fuente);
+  font-size: var(--t-md);
+  line-height: 1.65;
+}
+
+.area:focus {
+  outline: none;
+}
+
+.area::placeholder {
+  color: var(--texto-3);
+}
+
+.area:disabled {
+  background: var(--superficie-2);
+  color: var(--texto-3);
+}
+
+.pie {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+
+  height: var(--alto-control);
+  padding: 0 var(--e-4);
+  flex: 0 0 auto;
+
+  background: var(--superficie-2);
+  border-top: 1px solid var(--borde);
+
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+}
+
+.contador {
+  min-width: 9ch;
+}
+
+/* Ancho reservado: el texto alterna entre "Guardado" y "Guardando…" y no
+   tiene que empujar lo que sigue. */
+.guardado {
+  min-width: 11ch;
+}
+
+.atajo {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.atajo kbd {
+  padding: 1px 4px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--r-1);
+  font-family: var(--fuente);
+  font-size: 10px;
+  color: var(--texto-2);
+}
