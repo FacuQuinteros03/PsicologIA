@@ -1,0 +1,41 @@
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-4);
+}
+
+/* Auto-fit: en pantalla ancha entran 3 columnas, en angosta baja a 1 sin
+   necesidad de media queries. */
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--e-3);
+}
+
+.anchoCompleto {
+  margin-top: var(--e-3);
+  grid-column: 1 / -1;
+}
+
+.errorGeneral {
+  padding: var(--e-2) var(--e-3);
+  background: var(--peligro-suave);
+  border: 1px solid var(--peligro-borde);
+  border-radius: var(--r-2);
+  color: var(--peligro);
+  font-size: var(--t-base);
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--e-2);
+  /* Pegado abajo mientras se scrollea el formulario largo: los botones de
+     guardar quedan siempre a mano. */
+  position: sticky;
+  bottom: 0;
+  padding: var(--e-3) 0;
+  background: var(--fondo);
+  border-top: 1px solid var(--borde);
+}

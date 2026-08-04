@@ -1,0 +1,75 @@
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-1);
+  min-width: 0;
+}
+
+.etiqueta {
+  font-size: var(--t-sm);
+  font-weight: var(--peso-medio);
+  color: var(--texto-2);
+}
+
+.envoltorio {
+  position: relative;
+  display: flex;
+}
+
+.control {
+  height: var(--alto-control);
+  width: 100%;
+  /* Espacio a la derecha para la flecha, que va superpuesta. */
+  padding: 0 var(--e-5) 0 var(--e-2);
+
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--r-2);
+
+  color: var(--texto);
+  font-size: var(--t-base);
+
+  /* Se oculta la flecha del sistema para poder dibujar una consistente entre
+     navegadores; el resto del comportamiento nativo se mantiene. */
+  appearance: none;
+  cursor: pointer;
+  transition: border-color var(--transicion);
+}
+
+.control:hover:not(:disabled) {
+  border-color: var(--borde-fuerte);
+}
+
+.control:disabled {
+  background: var(--superficie-2);
+  color: var(--texto-3);
+  cursor: not-allowed;
+}
+
+.conError {
+  border-color: var(--peligro);
+}
+
+/* Chevron construido con bordes: sin SVG ni fuente de iconos. */
+.flecha {
+  position: absolute;
+  right: var(--e-3);
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -4px;
+  border-right: 1.5px solid var(--texto-3);
+  border-bottom: 1.5px solid var(--texto-3);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.ayuda {
+  font-size: var(--t-xs);
+  color: var(--texto-3);
+}
+
+.error {
+  font-size: var(--t-xs);
+  color: var(--peligro);
+}

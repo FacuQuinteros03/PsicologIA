@@ -7,11 +7,14 @@
  */
 
 import type {
+  FiltrosPacientes,
   Genograma,
   MencionSesion,
   NodoGenograma,
   NotasEstructuradas,
   Paciente,
+  PacienteCambios,
+  PacienteDetalle,
   PacienteNuevo,
   ProcesarNotas,
   Recordatorio,
@@ -94,13 +97,37 @@ function conParams(ruta: string, params: Record<string, string | string[] | unde
 export const api = {
   salud: () => pedir<{ status: string; entorno: string; proveedor_ia: string }>(`${BASE}/health`),
 
-  // --- Pacientes ---
-  listarPacientes: () => pedir<Paciente[]>(`${V1}/pacientes`),
+  // --- Pacientes (CRUD) ---
+  listarPacientes: (filtros?: FiltrosPacientes) =>
+    pedir<Paciente[]>(
+      conParams(`${V1}/pacientes`, {
+        estado: filtros?.estado,
+        q: filtros?.q,
+        incluir_archivados: filtros?.incluir_archivados ? 'true' : undefined,
+      }),
+    ),
 
-  obtenerPaciente: (id: string) => pedir<Paciente>(`${V1}/pacientes/${id}`),
+  obtenerPaciente: (id: string) => pedir<PacienteDetalle>(`${V1}/pacientes/${id}`),
 
   crearPaciente: (datos: PacienteNuevo) =>
-    pedir<Paciente>(`${V1}/pacientes`, { method: 'POST', body: JSON.stringify(datos) }),
+    pedir<PacienteDetalle>(`${V1}/pacientes`, { method: 'POST', body: JSON.stringify(datos) }),
+
+  actualizarPaciente: (id: string, cambios: PacienteCambios) =>
+    pedir<PacienteDetalle>(`${V1}/pacientes/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(cambios),
+    }),
+
+  /** Borra al paciente y todo lo que cuelga de él. Irreversible. */
+  eliminarPaciente: (id: string) =>
+    pedir<void>(`${V1}/pacientes/${id}`, { method: 'DELETE' }),
+
+  /** Baja lógica: lo saca del listado sin destruir la historia clínica. */
+  archivarPaciente: (id: string) =>
+    pedir<PacienteDetalle>(`${V1}/pacientes/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ estado: 'archivado' }),
+    }),
 
   // --- Historial ---
   listarSesiones: (pacienteId: string, filtros?: { tags?: string[]; q?: string }) =>

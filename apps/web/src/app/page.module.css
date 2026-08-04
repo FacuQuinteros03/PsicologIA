@@ -1,20 +1,51 @@
 .pagina {
-  max-width: 1100px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: var(--e-5) var(--e-4);
+}
+
+.buscador {
+  width: 240px;
+}
+
+.filtroEstado {
+  width: 170px;
+}
+
+.celdaNombre {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
 }
 
 .nombre {
   font-weight: var(--peso-medio);
 }
 
-/* Una sola línea: si el motivo es largo, se corta con puntos suspensivos en
-   lugar de romper la altura de la fila. */
+.documento {
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+}
+
+/* Una sola línea: un motivo largo no puede cambiar la altura de la fila. */
 .motivo {
   display: block;
-  max-width: 52ch;
+  max-width: 46ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--texto-2);
+}
+
+.tenue {
+  color: var(--texto-2);
+}
+
+.sugerencia {
+  margin-top: var(--e-2);
+  padding: var(--e-2);
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--r-2);
+  font-size: var(--t-sm);
 }

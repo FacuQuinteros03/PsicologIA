@@ -1,0 +1,27 @@
+/* Compartido por las pantallas de alta y edición de paciente. */
+
+.pagina {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--e-5) var(--e-4) var(--e-6);
+}
+
+.encabezado {
+  margin-bottom: var(--e-4);
+}
+
+.titulo {
+  font-size: var(--t-xl);
+}
+
+.ayuda {
+  margin-top: 2px;
+  color: var(--texto-2);
+  font-size: var(--t-base);
+}
+
+.centro {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+}

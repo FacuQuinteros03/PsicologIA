@@ -14,6 +14,10 @@ export type EstadoIA = 'pendiente' | 'procesando' | 'completado' | 'error';
 
 export type Prioridad = 'baja' | 'media' | 'alta';
 
+export type Modalidad = 'presencial' | 'virtual' | 'mixta';
+
+export type Frecuencia = 'semanal' | 'quincenal' | 'mensual' | 'a_demanda';
+
 export type RolNodo =
   | 'indice'
   | 'madre'
@@ -53,25 +57,75 @@ export type CalidadVinculo =
 
 // --- Pacientes --------------------------------------------------------------
 
+/** Fila del listado. Es lo que devuelve `GET /pacientes`. */
 export interface Paciente {
   id: string;
   nombre: string;
   apellido: string;
+  documento: string | null;
   fecha_nacimiento: string | null;
+  /** La calcula el backend; no se guarda. */
+  edad: number | null;
+  genero: Genero;
   email: string | null;
   telefono: string | null;
   motivo_consulta: string | null;
   estado: EstadoPaciente;
+  modalidad: Modalidad;
+  frecuencia: Frecuencia;
   created_at: string;
 }
 
+/** Ficha completa. La devuelven GET por id, POST y PATCH. */
+export interface PacienteDetalle extends Paciente {
+  ocupacion: string | null;
+  contacto_emergencia: string | null;
+  telefono_emergencia: string | null;
+  obra_social: string | null;
+  numero_afiliado: string | null;
+  derivado_por: string | null;
+  fecha_inicio: string | null;
+  honorarios: string | null;
+  notas_administrativas: string | null;
+  updated_at: string;
+  total_sesiones: number;
+  total_nodos: number;
+  recordatorios_pendientes: number;
+}
+
+/** Payload de alta. `estado` no va: todo paciente nuevo nace activo. */
 export interface PacienteNuevo {
   nombre: string;
   apellido: string;
+  documento?: string | null;
   fecha_nacimiento?: string | null;
+  genero?: Genero;
+  ocupacion?: string | null;
   email?: string | null;
   telefono?: string | null;
+  contacto_emergencia?: string | null;
+  telefono_emergencia?: string | null;
+  obra_social?: string | null;
+  numero_afiliado?: string | null;
   motivo_consulta?: string | null;
+  derivado_por?: string | null;
+  fecha_inicio?: string | null;
+  modalidad?: Modalidad;
+  frecuencia?: Frecuencia;
+  honorarios?: string | null;
+  notas_administrativas?: string | null;
+}
+
+/**
+ * Payload de edición. Todo opcional, semántica PATCH: lo que no se manda queda
+ * intacto y lo que se manda en `null` se borra.
+ */
+export type PacienteCambios = Partial<PacienteNuevo> & { estado?: EstadoPaciente };
+
+export interface FiltrosPacientes {
+  estado?: EstadoPaciente;
+  q?: string;
+  incluir_archivados?: boolean;
 }
 
 export interface Recordatorio {

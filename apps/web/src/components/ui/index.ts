@@ -24,8 +24,14 @@ export type { PropsPanel } from './Panel';
 export { AreaTexto, Campo } from './Campo';
 export type { PropsAreaTexto, PropsCampo } from './Campo';
 
+export { Select } from './Select';
+export type { OpcionSelect, PropsSelect } from './Select';
+
 export { Tabla } from './Tabla';
 export type { Columna, PropsTabla } from './Tabla';
 
 export { Estado } from './Estado';
 export type { PropsEstado } from './Estado';
+
+export { Dialogo } from './Dialogo';
+export type { PropsDialogo } from './Dialogo';
