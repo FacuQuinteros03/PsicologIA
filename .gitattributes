@@ -1,0 +1,13 @@
+# Normaliza los fines de línea en el repositorio.
+#
+# Sin esto, git en Windows commitea CRLF y en Linux LF, y el diff se llena de
+# cambios que no son cambios. `.editorconfig` ya declara `end_of_line = lf`;
+# esto lo hace cumplir del lado de git.
+
+* text=auto eol=lf
+
+# Binarios: que git no intente normalizarlos.
+*.ico binary
+*.png binary
+*.jpg binary
+*.woff2 binary
