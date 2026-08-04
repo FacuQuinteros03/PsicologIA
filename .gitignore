@@ -1,0 +1,38 @@
+# === Secretos: datos clínicos, nunca al repo ===
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# === Node / Next.js ===
+node_modules/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+.vercel/
+
+# === Editores / SO ===
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Google Drive (el proyecto vive en una unidad sincronizada) ===
+*.gdoc
+*.gsheet

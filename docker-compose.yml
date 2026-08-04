@@ -1,0 +1,36 @@
+# Postgres para desarrollo local.
+#
+#   docker compose up -d      levantar
+#   docker compose down       parar (los datos sobreviven en el volumen)
+#   docker compose down -v    parar y BORRAR los datos
+#
+# Se usa 17-alpine y no 18: la imagen 18 cambió la ruta del volumen de datos y
+# no aporta nada que este proyecto necesite. 17 tiene soporte hasta 2029.
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: psicoia-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: psicoia
+      POSTGRES_PASSWORD: psicoia_local
+      POSTGRES_DB: psicoia
+      # Fuerza el locale español para que `to_tsvector('spanish', ...)` y los
+      # ordenamientos se comporten igual que en producción.
+      POSTGRES_INITDB_ARGS: "--locale=es_ES.UTF-8 --encoding=UTF8"
+      LANG: es_ES.utf8
+    ports:
+      # 5433 en el host a propósito: si alguna vez instalás Postgres nativo en
+      # Windows, se queda con el 5432 y esto sigue funcionando sin conflicto.
+      - "5433:5432"
+    volumes:
+      - psicoia_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U psicoia -d psicoia"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  psicoia_pgdata:
