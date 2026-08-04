@@ -21,9 +21,16 @@ services:
       POSTGRES_INITDB_ARGS: "--locale=es_ES.UTF-8 --encoding=UTF8"
       LANG: es_ES.utf8
     ports:
+      # El `127.0.0.1:` NO es opcional. Sin él, Docker publica el puerto en
+      # 0.0.0.0 —todas las interfaces— y la base queda accesible desde la red
+      # local, o desde internet si hay un router con UPnP o el puerto abierto.
+      # Con la contraseña de desarrollo visible en el repo, eso es exactamente
+      # lo que buscan los bots que escanean Postgres para instalar mineros.
+      # Con este prefijo, solo se puede conectar desde esta máquina.
+      #
       # 5433 en el host a propósito: si alguna vez instalás Postgres nativo en
       # Windows, se queda con el 5432 y esto sigue funcionando sin conflicto.
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - psicoia_pgdata:/var/lib/postgresql/data
     healthcheck:

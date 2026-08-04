@@ -24,14 +24,23 @@ app = FastAPI(
     version="0.1.0",
     description="Copiloto terapéutico: notas asistidas por IA y genograma interactivo.",
     lifespan=lifespan,
+    # En producción no se publica el esquema: /docs y /openapi.json le entregan a
+    # cualquiera el mapa completo de la API, incluidos los nombres de campo del
+    # historial clínico. En desarrollo siguen disponibles.
+    docs_url=None if settings.es_produccion else "/docs",
+    redoc_url=None if settings.es_produccion else "/redoc",
+    openapi_url=None if settings.es_produccion else "/openapi.json",
 )
 
+# `allow_origins` sale de la config y por defecto está vacío. Nunca poner `["*"]`
+# junto con `allow_credentials=True`: los navegadores lo rechazan, y si se
+# forzara, cualquier sitio podría hacer requests autenticados contra la API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 

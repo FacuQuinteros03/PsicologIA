@@ -17,11 +17,14 @@ class Settings(BaseSettings):
     )
 
     # --- App ---
+    # Los defaults son los MÁS RESTRICTIVOS a propósito ("fail closed"): si esto
+    # se despliega alguna vez sin `.env`, tiene que arrancar cerrado, no abierto.
+    # El entorno de desarrollo los relaja explícitamente desde su propio `.env`.
     app_name: str = "PsicoIA API"
     api_v1_prefix: str = "/api/v1"
-    environment: Literal["local", "staging", "production"] = "local"
-    debug: bool = True
-    cors_origins: list[str] = ["http://localhost:3000"]
+    environment: Literal["local", "staging", "production"] = "production"
+    debug: bool = False
+    cors_origins: list[str] = []
 
     # --- Base de datos ---
     database_url: str
@@ -56,6 +59,10 @@ class Settings(BaseSettings):
         if v.startswith("postgresql://"):
             return "postgresql+psycopg://" + v[len("postgresql://") :]
         return v
+
+    @property
+    def es_produccion(self) -> bool:
+        return self.environment == "production"
 
     @property
     def proveedor_ia_efectivo(self) -> Literal["mock", "gemini"]:

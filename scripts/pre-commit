@@ -1,0 +1,12 @@
+#!/bin/sh
+# Hook de pre-commit: bloquea el commit si detecta credenciales en el índice.
+#
+# Instalación (una sola vez, desde la raíz del repo):
+#   cp scripts/pre-commit .git/hooks/pre-commit
+#
+# En Windows con Git Bash no hace falta chmod. En Linux/macOS:
+#   chmod +x .git/hooks/pre-commit
+#
+# Para saltearlo en un caso puntual y justificado: git commit --no-verify
+
+python scripts/escanear_secretos.py --staged || exit 1

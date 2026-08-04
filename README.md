@@ -106,14 +106,68 @@ Lint:
 cd apps/api && .venv/Scripts/ruff check app alembic
 ```
 
-## Datos clínicos
+## Seguridad
 
-Son datos de salud. Reglas que aplican desde el día uno:
+Esto maneja datos de salud. Las reglas no son negociables.
 
-- `.env` nunca se commitea (está en `.gitignore`), y `alembic.ini` no lleva la URL.
-- No se loguean `notas_borrador` ni `resumen_ia`: los logs sólo llevan IDs.
-  Por eso `DB_ECHO` viene en `false` — el echo de SQL imprimiría las notas.
+### Credenciales
+
+**Ninguna API key entra al repositorio, en ningún formato.** Van únicamente en
+`apps/api/.env`, que está en `.gitignore`. Tampoco en comentarios, ni en tests,
+ni en un archivo "temporal".
+
+Instalá el hook que lo verifica antes de cada commit:
+
+```bash
+cp scripts/pre-commit .git/hooks/pre-commit
+```
+
+Y para auditar el historial completo en cualquier momento:
+
+```bash
+python scripts/escanear_secretos.py
+```
+
+Si alguna vez se filtra una key, **revocala en la consola del proveedor**.
+Borrar el commit no sirve: queda en los forks, en los mirrors y en los bots que
+indexan GitHub en tiempo real, que la encuentran en minutos.
+
+La contraseña del Postgres de desarrollo sí está a la vista en
+`docker-compose.yml` y en `.env.example`. Es deliberado y no es un secreto: el
+contenedor escucha **solo en `127.0.0.1`** y la base es descartable.
+
+### Configuración
+
+Los defaults de `Settings` son los más restrictivos (*fail closed*): sin `.env`,
+la app arranca con `environment=production`, `debug=False` y `cors_origins=[]`.
+En producción no se publican `/docs`, `/redoc` ni `/openapi.json` — le darían a
+cualquiera el mapa completo de la API y los nombres de campo del historial
+clínico.
+
+El puerto de Postgres se publica como `127.0.0.1:5433:5432`. **Ese prefijo no es
+decorativo**: sin él Docker lo abre en todas las interfaces, y una base expuesta
+con credenciales conocidas es exactamente lo que buscan los bots que instalan
+mineros.
+
+### Datos clínicos
+
+- No se loguean `notas_borrador` ni `resumen_ia`: los logs sólo llevan IDs. Por
+  eso `DB_ECHO` viene en `false` — el echo de SQL imprimiría las notas.
+- Los errores del proveedor de IA se loguean por tipo de excepción, nunca con el
+  texto de las notas.
 - `notas_borrador` es la fuente de verdad y el reprocesado de IA nunca la pisa.
 - `ia_payload` guarda la respuesta cruda del modelo para poder auditar qué generó.
+- Todo endpoint que recibe un `paciente_id` pasa por `obtener_paciente_propio()`,
+  que verifica la pertenencia y devuelve **404 y no 403**, para no revelar que el
+  paciente existe pero es de otra persona.
 
-**Deuda explícita del MVP:** no hay cifrado a nivel campo ni auditoría de accesos.
+### Deuda explícita del MVP
+
+Esto todavía **no está listo para producción**:
+
+- **No hay autenticación.** `get_terapeuta_actual()` devuelve un terapeuta fijo.
+  Cualquiera que llegue a la API ve esos datos. No desplegarlo en público hasta
+  que haya login.
+- Sin Row Level Security en Postgres: el aislamiento depende sólo de la capa de
+  aplicación.
+- Sin cifrado a nivel campo, sin auditoría de accesos y sin rate limiting.
