@@ -1,0 +1,76 @@
+{
+  // Ctrl+Shift+P -> "Tasks: Run Task", o Ctrl+Shift+B para la de build por defecto.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1. Base de datos (Docker)",
+      "type": "shell",
+      "command": "docker compose up -d",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "2. API (FastAPI)",
+      "type": "shell",
+      // El flag --loop NO es opcional en Windows: psycopg async no funciona
+      // sobre ProactorEventLoop, que es el que elige uvicorn por defecto.
+      "command": "${workspaceFolder}/apps/api/.venv/Scripts/uvicorn.exe",
+      "args": [
+        "app.main:app",
+        "--reload",
+        "--port",
+        "8000",
+        "--loop",
+        "asyncio:SelectorEventLoop"
+      ],
+      "options": { "cwd": "${workspaceFolder}/apps/api" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" }
+    },
+    {
+      "label": "3. Web (Next.js)",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/apps/web" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" }
+    },
+    {
+      "label": "▶ Levantar todo",
+      "dependsOn": ["1. Base de datos (Docker)", "2. API (FastAPI)", "3. Web (Next.js)"],
+      "dependsOrder": "sequence",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Verificar backend (23 checks)",
+      "type": "shell",
+      "command": "${workspaceFolder}/apps/api/.venv/Scripts/python.exe",
+      "args": ["scripts/verificar_backend.py"],
+      "options": { "cwd": "${workspaceFolder}/apps/api" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Escanear secretos",
+      "type": "shell",
+      "command": "python",
+      "args": ["scripts/escanear_secretos.py"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Tests del backend",
+      "type": "shell",
+      "command": "${workspaceFolder}/apps/api/.venv/Scripts/python.exe",
+      "args": ["-m", "pytest", "-q"],
+      "options": { "cwd": "${workspaceFolder}/apps/api" },
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

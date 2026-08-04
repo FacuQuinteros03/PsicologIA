@@ -27,12 +27,17 @@ next-env.d.ts
 .vercel/
 
 # === Editores / SO ===
-.vscode/
+.vscode/*
+# Estos tres sí se versionan: codifican cómo se levanta el proyecto (incluido el
+# flag --loop, que en Windows es obligatorio) y qué intérprete usar. Sin ellos,
+# cada persona que clone tiene que redescubrirlo.
+!.vscode/tasks.json
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# === Google Drive (el proyecto vive en una unidad sincronizada) ===
 *.gdoc
 *.gsheet
