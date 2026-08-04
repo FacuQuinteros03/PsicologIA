@@ -1,11 +1,16 @@
 {
-  // Ctrl+Shift+P -> "Tasks: Run Task", o Ctrl+Shift+B para la de build por defecto.
+  // Ctrl+Shift+B levanta todo (base + API + web).
+  // Ctrl+Shift+P -> "Tasks: Run Task" para las demás.
   "version": "2.0.0",
   "tasks": [
     {
       "label": "1. Base de datos (Docker)",
       "type": "shell",
-      "command": "docker compose up -d",
+      // `--wait` no es cosmético: sin él `up -d` vuelve apenas el contenedor
+      // arranca, pero Postgres todavía está inicializando y no acepta
+      // conexiones. La API arrancaría contra una base que aún no escucha.
+      // Con `--wait`, compose bloquea hasta que el healthcheck da healthy.
+      "command": "docker compose up -d --wait",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": [],
       "presentation": { "reveal": "silent", "panel": "shared" }
@@ -26,7 +31,18 @@
       ],
       "options": { "cwd": "${workspaceFolder}/apps/api" },
       "isBackground": true,
-      "problemMatcher": [],
+      // Un problemMatcher de background le dice a VS Code cuándo el servidor
+      // terminó de arrancar. Sin esto la tarea queda girando "en ejecución"
+      // para siempre y no se puede encadenar con otras.
+      "problemMatcher": {
+        "owner": "uvicorn",
+        "pattern": { "regexp": "^(?:)$", "file": 1, "location": 2, "message": 3 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*Started reloader.*",
+          "endsPattern": ".*Application startup complete.*"
+        }
+      },
       "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" }
     },
     {
@@ -35,18 +51,47 @@
       "command": "npm run dev",
       "options": { "cwd": "${workspaceFolder}/apps/web" },
       "isBackground": true,
-      "problemMatcher": [],
+      "problemMatcher": {
+        "owner": "next",
+        "pattern": { "regexp": "^(?:)$", "file": 1, "location": 2, "message": 3 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*(Next\\.js|Starting).*",
+          "endsPattern": ".*(Ready in|compiled successfully).*"
+        }
+      },
       "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" }
     },
     {
+      // Nivel intermedio a propósito. `dependsOrder: sequence` espera a que cada
+      // tarea TERMINE, y un servidor no termina nunca: encadenar los tres en
+      // secuencia dejaba la web sin arrancar. Acá la base corre y termina, y
+      // recién después los dos servidores salen juntos en paralelo.
+      "label": "Servidores (API + Web)",
+      "dependsOn": ["2. API (FastAPI)", "3. Web (Next.js)"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
       "label": "▶ Levantar todo",
-      "dependsOn": ["1. Base de datos (Docker)", "2. API (FastAPI)", "3. Web (Next.js)"],
+      "dependsOn": ["1. Base de datos (Docker)", "Servidores (API + Web)"],
       "dependsOrder": "sequence",
       "group": { "kind": "build", "isDefault": true },
       "problemMatcher": []
     },
     {
-      "label": "Verificar backend (23 checks)",
+      "label": "■ Detener todo",
+      "type": "shell",
+      // Mata lo que esté escuchando en 8000 y 3000. Resuelve el caso de un
+      // `next dev` huérfano de una sesión anterior, que hace que el siguiente
+      // arranque se corra solo al 3001 y el front quede apuntando a otro lado.
+      "command": "docker compose stop; Get-NetTCPConnection -LocalPort 3000,8000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "Verificar backend (36 checks)",
       "type": "shell",
       "command": "${workspaceFolder}/apps/api/.venv/Scripts/python.exe",
       "args": ["scripts/verificar_backend.py"],
