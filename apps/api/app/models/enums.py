@@ -29,6 +29,23 @@ class Prioridad(StrEnum):
     ALTA = "alta"
 
 
+class Modalidad(StrEnum):
+    """Cómo se llevan adelante las sesiones."""
+
+    PRESENCIAL = "presencial"
+    VIRTUAL = "virtual"
+    MIXTA = "mixta"
+
+
+class Frecuencia(StrEnum):
+    """Encuadre acordado con el paciente."""
+
+    SEMANAL = "semanal"
+    QUINCENAL = "quincenal"
+    MENSUAL = "mensual"
+    A_DEMANDA = "a_demanda"
+
+
 class RolNodo(StrEnum):
     """Rol de la persona en la red vincular del paciente."""
 

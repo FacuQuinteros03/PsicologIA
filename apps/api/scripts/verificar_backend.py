@@ -201,6 +201,65 @@ async def main() -> int:
             check(r.status_code == 200 and r.json()["pos_x"] == 123.5,
                   "Persiste la posición del nodo (drag)")
 
+        # ---------- CRUD de pacientes ----------
+        print("\nCRUD DE PACIENTES")
+        ficha = {
+            "nombre": "Test", "apellido": "CRUD", "documento": "99887766",
+            "fecha_nacimiento": "1990-05-20", "genero": "no_binario",
+            "ocupacion": "Docente", "email": "test.crud@ejemplo.com",
+            "telefono": "11 4444-0000", "contacto_emergencia": "Alguien",
+            "telefono_emergencia": "11 4444-1111", "obra_social": "Swiss Medical",
+            "numero_afiliado": "AB-999", "motivo_consulta": "Consulta de prueba.",
+            "derivado_por": "Derivación de prueba", "fecha_inicio": "2026-07-01",
+            "modalidad": "virtual", "frecuencia": "quincenal",
+            "honorarios": "18500.50", "notas_administrativas": "Nota administrativa.",
+        }
+        r = await cli.post("/api/v1/pacientes", json=ficha)
+        creado = r.json() if r.status_code == 201 else {}
+        if not check(r.status_code == 201, "POST crea con la ficha completa", f"HTTP {r.status_code} {r.text[:140]}"):
+            return 1
+        nuevo_id = creado["id"]
+
+        faltantes = [c for c in ficha if creado.get(c) in (None, "")]
+        check(not faltantes, "Persiste los 19 campos de la ficha",
+              f"vacíos: {faltantes}" if faltantes else "ninguno vino vacío")
+        check(creado.get("edad") == 36, "Calcula la edad desde la fecha de nacimiento",
+              f"edad={creado.get('edad')}")
+
+        # El documento es único por terapeuta.
+        r = await cli.post("/api/v1/pacientes", json={**ficha, "nombre": "Otro"})
+        check(r.status_code == 409, "Rechaza documento repetido con 409", f"HTTP {r.status_code}")
+
+        # PATCH parcial: lo omitido no se toca.
+        r = await cli.patch(f"/api/v1/pacientes/{nuevo_id}", json={"telefono": "11 0000-9999"})
+        actualizado = r.json() if r.status_code == 200 else {}
+        check(r.status_code == 200 and actualizado.get("telefono") == "11 0000-9999",
+              "PATCH actualiza el campo enviado", f"HTTP {r.status_code}")
+        check(actualizado.get("ocupacion") == "Docente" and actualizado.get("obra_social") == "Swiss Medical",
+              "PATCH NO pisa los campos omitidos")
+
+        # Enviar null sí borra: es la diferencia entre omitir y vaciar.
+        r = await cli.patch(f"/api/v1/pacientes/{nuevo_id}", json={"ocupacion": None})
+        check(r.status_code == 200 and r.json().get("ocupacion") is None,
+              "PATCH con null vacía el campo")
+
+        # Archivar = baja lógica. Sale del listado sin destruir nada.
+        r = await cli.patch(f"/api/v1/pacientes/{nuevo_id}", json={"estado": "archivado"})
+        check(r.status_code == 200 and r.json()["estado"] == "archivado", "PATCH archiva el paciente")
+
+        r = await cli.get("/api/v1/pacientes")
+        check(nuevo_id not in {p["id"] for p in r.json()}, "El archivado sale del listado por defecto")
+        r = await cli.get("/api/v1/pacientes", params={"incluir_archivados": "true"})
+        check(nuevo_id in {p["id"] for p in r.json()}, "Y reaparece con incluir_archivados=true")
+
+        r = await cli.get("/api/v1/pacientes", params={"q": "99887766", "incluir_archivados": "true"})
+        check(r.status_code == 200 and len(r.json()) == 1, "Busca por documento con ?q=")
+
+        r = await cli.delete(f"/api/v1/pacientes/{nuevo_id}")
+        check(r.status_code == 204, "DELETE elimina el paciente", f"HTTP {r.status_code}")
+        r = await cli.get(f"/api/v1/pacientes/{nuevo_id}")
+        check(r.status_code == 404, "El paciente borrado ya no existe")
+
         # ---------- Aislamiento multi-tenant ----------
         print("\nAISLAMIENTO MULTI-TENANT")
         otro_terapeuta, otro_paciente = uuid.uuid4(), uuid.uuid4()

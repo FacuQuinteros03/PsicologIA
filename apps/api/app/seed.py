@@ -8,7 +8,8 @@ Los IDs son fijos a propósito para que la URL del genograma en el frontend
 
 import asyncio
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
+from decimal import Decimal
 
 from sqlmodel import select
 
@@ -18,7 +19,9 @@ from app.models import (
     CalidadVinculo,
     ConexionGenograma,
     EstadoIA,
+    Frecuencia,
     Genero,
+    Modalidad,
     NodoGenograma,
     Paciente,
     Prioridad,
@@ -54,6 +57,8 @@ async def sembrar() -> None:
                 )
             )
 
+        # Ficha completa a propósito: sirve para ver el formulario de edición
+        # con todos los campos cargados, no sólo los obligatorios.
         if await sesion_db.get(Paciente, PACIENTE_ID) is None:
             sesion_db.add(
                 Paciente(
@@ -61,7 +66,23 @@ async def sembrar() -> None:
                     terapeuta_id=TERAPEUTA_ID,
                     nombre="Ana",
                     apellido="Demo",
+                    documento="30111222",
+                    fecha_nacimiento=date(1991, 4, 12),
+                    genero=Genero.FEMENINO,
+                    ocupacion="Diseñadora gráfica",
+                    email="ana.demo@ejemplo.com",
+                    telefono="11 5555-1234",
+                    contacto_emergencia="Carla Demo (hermana)",
+                    telefono_emergencia="11 5555-9876",
+                    obra_social="OSDE",
+                    numero_afiliado="62-1234567-01",
                     motivo_consulta="Ansiedad laboral y conflictos con la familia de origen.",
+                    derivado_por="Dra. Pérez (clínica)",
+                    fecha_inicio=date(2026, 6, 1),
+                    modalidad=Modalidad.MIXTA,
+                    frecuencia=Frecuencia.SEMANAL,
+                    honorarios=Decimal("25000.00"),
+                    notas_administrativas="Factura a nombre propio. Prefiere virtual los lunes.",
                 )
             )
         await sesion_db.commit()

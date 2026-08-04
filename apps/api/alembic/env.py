@@ -36,7 +36,19 @@ INDICES_MANUALES = {"ix_sesiones_fts"}
 def include_object(
     obj: Any, name: str | None, type_: str, reflected: bool, compare_to: Any
 ) -> bool:
-    return not (type_ == "index" and name in INDICES_MANUALES)
+    if type_ == "index" and name in INDICES_MANUALES:
+        return False
+
+    # Los CHECK de los enums los emite SQLAlchemy junto con la columna (ver
+    # `tipo_enum` en models/base.py), pero NO quedan declarados en el metadata.
+    # Alembic los encuentra en la base, no los ve del otro lado, y los marca
+    # para borrar: cada migración nueva vendría con un `drop_constraint` de
+    # todas las validaciones de enum. Por eso quedan fuera del diff.
+    #
+    # Contrapartida asumida: si algún día agregás un CheckConstraint declarado a
+    # mano, el autogenerate no lo va a emitir y hay que escribirlo en la
+    # migración. Es más barato que pelear con los falsos positivos.
+    return type_ != "check_constraint"
 
 
 def run_migrations_offline() -> None:
