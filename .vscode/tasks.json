@@ -95,7 +95,20 @@
       // se cuelga, según a cuál le toque.
       //
       // El filtro por 'PsicoIA' evita tocar cualquier otro node o python.
-      "command": "docker compose stop; Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'PsicoIA' -and $_.CommandLine -match 'uvicorn|next' } | ForEach-Object { & taskkill /F /T /PID $_.ProcessId 2>$null }; Get-NetTCPConnection -LocalPort 3000,8000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { & taskkill /F /T /PID $_ 2>$null }",
+      // El `exit` final mira el ESTADO, no si cada kill funcionó. Los dos
+      // barridos se pisan a propósito —el segundo agarra lo que el primero no
+      // reconoció— así que taskkill sobre un PID ya muerto es lo normal y
+      // devuelve error. Sin esta línea la tarea terminaba en 1 y VS Code la
+      // mostraba como fallida aunque hubiera parado todo bien.
+      // El `-Filter` a python/node NO es una optimización: sin él, Win32_Process
+      // enumera todos los procesos del sistema y leerle `CommandLine` a los
+      // protegidos da acceso denegado. Esos errores no fatales alcanzan para que
+      // VS Code marque la tarea como fallida aunque haya parado todo bien.
+      //
+      // El `exit` final mira el ESTADO y no si cada kill funcionó: los dos
+      // barridos se pisan a propósito —el segundo agarra lo que el primero no
+      // reconoció— así que taskkill sobre un PID ya muerto es lo esperable.
+      "command": "docker compose stop; Get-CimInstance Win32_Process -Filter \"Name LIKE '%python%' OR Name LIKE '%node%'\" -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -match 'PsicoIA' -and $_.CommandLine -match 'uvicorn|next' } | ForEach-Object { & taskkill /F /T /PID $_.ProcessId 2>$null | Out-Null }; Get-NetTCPConnection -LocalPort 3000,8000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { & taskkill /F /T /PID $_ 2>$null | Out-Null }; Start-Sleep 2; if (Get-NetTCPConnection -LocalPort 3000,8000 -State Listen -ErrorAction SilentlyContinue) { Write-Host 'Quedaron procesos escuchando en 3000 u 8000.'; exit 1 } else { Write-Host 'Todo detenido.'; exit 0 }",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": [],
       "presentation": { "reveal": "silent", "panel": "shared" }
