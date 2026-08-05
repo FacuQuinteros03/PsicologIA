@@ -10,16 +10,26 @@ Requiere `docker compose up -d` + `alembic upgrade head` + `python -m app.seed`.
 """
 
 import asyncio
+import os
 import sys
 import uuid
 
-from httpx import ASGITransport, AsyncClient
-from sqlalchemy import text
+# Se fija el proveedor ANTES de importar settings, que es cuando se lee el
+# entorno. Este script es un portón determinista: sus checks afirman cosas como
+# "devuelve 3 o más entidades", y contra el modelo real esa afirmación depende
+# de la tirada, tarda ~11 s por llamada y se cobra. El mock es heurístico y
+# siempre responde lo mismo, que es justo lo que hace falta acá.
+#
+# Para ejercitar Gemini de verdad: PSICOIA_VERIFICAR_IA=gemini python scripts/verificar_backend.py
+os.environ["IA_PROVIDER"] = os.environ.get("PSICOIA_VERIFICAR_IA", "mock")
 
-from app.core.config import settings
-from app.core.database import AsyncSessionLocal, engine
-from app.core.loop import configurar_event_loop
-from app.main import app
+from httpx import ASGITransport, AsyncClient  # noqa: E402
+from sqlalchemy import text  # noqa: E402
+
+from app.core.config import settings  # noqa: E402
+from app.core.database import AsyncSessionLocal, engine  # noqa: E402
+from app.core.loop import configurar_event_loop  # noqa: E402
+from app.main import app  # noqa: E402
 
 # Cuando la salida no es una terminal —una tubería, un redirect a archivo, el
 # panel de tareas— Python en Windows deja de usar UTF-8 y cae a cp1252, que no

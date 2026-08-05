@@ -52,7 +52,39 @@ def _inlinear_refs(schema: dict[str, Any]) -> dict[str, Any]:
     return resolver(schema)
 
 
-ESQUEMA_SALIDA = _inlinear_refs(SalidaIA.model_json_schema())
+def _forzar_requeridos(schema: dict[str, Any]) -> dict[str, Any]:
+    """Marca como obligatorias TODAS las propiedades, en todos los niveles.
+
+    Sin esto el schema pedía un solo campo: `resumen_clinico`. Los demás llevan
+    `default_factory=list` o `default=""` en `SalidaIA`, y Pydantic considera no
+    requerido a todo campo con default, así que quedaban fuera de `required`.
+
+    La consecuencia era silenciosa y grave: devolver `tags`, `entidades` y
+    `alertas_proxima_sesion` vacíos CUMPLÍA el contrato. El modelo no fallaba,
+    hacía lo mínimo que se le pedía, y variaba entre llamadas. Medido antes de
+    este cambio: 1 de cada 4 respuestas traía las entidades. Las otras 3 dejaban
+    el genograma sin nodos y la sesión sin recordatorios, sin ningún error.
+
+    Los defaults se mantienen del lado de Python a propósito: si aun así llega
+    una respuesta incompleta, `SalidaIA` la parsea en vez de reventar.
+    """
+    schema = copy.deepcopy(schema)
+
+    def recorrer(nodo: Any) -> Any:
+        if isinstance(nodo, dict):
+            nodo = {clave: recorrer(valor) for clave, valor in nodo.items()}
+            propiedades = nodo.get("properties")
+            if isinstance(propiedades, dict) and propiedades:
+                nodo["required"] = list(propiedades)
+            return nodo
+        if isinstance(nodo, list):
+            return [recorrer(item) for item in nodo]
+        return nodo
+
+    return recorrer(schema)
+
+
+ESQUEMA_SALIDA = _forzar_requeridos(_inlinear_refs(SalidaIA.model_json_schema()))
 
 
 class GeminiIA:

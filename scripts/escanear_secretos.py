@@ -18,6 +18,10 @@ import sys
 
 PATRONES: dict[str, bytes] = {
     "Google / Gemini API key": rb"AIza[0-9A-Za-z_\-]{35}",
+    # AI Studio emite también keys con este prefijo, que no matchean el `AIza`
+    # clásico. Sin esta línea, una key de Gemini pegada en un archivo trackeado
+    # pasaba el hook sin que saltara nada.
+    "Google AI Studio key": rb"AQ\.[A-Za-z0-9_\-]{30,}",
     "OpenAI API key": rb"sk-[A-Za-z0-9]{32,}",
     "Anthropic API key": rb"sk-ant-[A-Za-z0-9\-_]{20,}",
     "GitHub token": rb"gh[pousr]_[A-Za-z0-9]{36}",
@@ -25,9 +29,22 @@ PATRONES: dict[str, bytes] = {
     "AWS access key": rb"AKIA[0-9A-Z]{16}",
     "Clave privada": rb"-----BEGIN [A-Z ]*PRIVATE KEY-----",
     "JSON Web Token": rb"eyJ[A-Za-z0-9_\-]{15,}\.eyJ[A-Za-z0-9_\-]{15,}",
+    # Las comillas son OPCIONALES a propósito: en un `.env` los valores van sin
+    # comillas (`GEMINI_API_KEY=xxxx`), y la versión anterior de este patrón las
+    # exigía, así que se le escapaba justo el caso más probable.
+    #
+    # Pedir 20+ caracteres del charset de una credencial (sin espacios, sin
+    # paréntesis) es lo que evita los falsos positivos: `key = os.getenv("X")`
+    # corta en el paréntesis a los 9 caracteres y no llega al umbral.
+    #
+    # El punto queda FUERA del charset a propósito. Con punto, una lectura de
+    # configuración como `api_key=settings.gemini_api_key` alcanzaba los 20
+    # caracteres y se reportaba como credencial. Sin punto corta en `settings`
+    # y no dispara. Las credenciales que sí llevan punto (las de AI Studio, los
+    # JWT) tienen cada una su patrón propio más arriba.
     "Credencial asignada": (
         rb"(?i)(api[_-]?key|secret|token|passwd|password)\s*[=:]\s*"
-        rb"['\"][^'\"\s]{16,}['\"]"
+        rb"['\"]?[A-Za-z0-9_\-]{20,}['\"]?"
     ),
 }
 
