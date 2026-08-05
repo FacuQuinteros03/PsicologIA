@@ -21,6 +21,14 @@ from app.core.database import AsyncSessionLocal, engine
 from app.core.loop import configurar_event_loop
 from app.main import app
 
+# Cuando la salida no es una terminal —una tubería, un redirect a archivo, el
+# panel de tareas— Python en Windows deja de usar UTF-8 y cae a cp1252, que no
+# sabe codificar los acentos ni el '↔' de los títulos. El script moría con
+# UnicodeEncodeError a mitad de camino y sin haber fallado ningún check.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 TABLAS_ESPERADAS = {
     "terapeutas",
     "pacientes",
