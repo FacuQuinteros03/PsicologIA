@@ -1,25 +1,75 @@
 .pagina {
-  max-width: 1240px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: var(--e-5) var(--e-4);
+  padding: var(--e-5) var(--e-4) var(--e-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-5);
+}
+
+/* Banner de Calma / Hero estilo Notion */
+.heroNotion {
+  background: var(--superficie-destacada);
+  border: 1px solid var(--borde-destacado);
+  border-radius: var(--r-3);
+  padding: var(--e-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-4);
+  box-shadow: var(--sombra-sutil);
+}
+
+.heroContenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-1);
+  max-width: 600px;
+}
+
+.heroEtiqueta {
+  font-size: var(--t-xs);
+  font-weight: var(--peso-fuerte);
+  color: var(--alerta);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.heroTitulo {
+  font-size: var(--t-xl);
+  font-weight: var(--peso-fuerte);
+  color: var(--texto);
+}
+
+.heroBajada {
+  font-size: var(--t-sm);
+  color: var(--texto-2);
+}
+
+.busquedaYFiltros {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
 }
 
 .buscador {
-  width: 240px;
+  width: 260px;
 }
 
 .filtroEstado {
   width: 170px;
 }
 
+/* Celdas y detalles */
 .celdaNombre {
   display: flex;
   flex-direction: column;
-  line-height: 1.2;
+  gap: 2px;
 }
 
 .nombre {
   font-weight: var(--peso-medio);
+  color: var(--texto);
 }
 
 .documento {
@@ -27,10 +77,9 @@
   font-size: var(--t-xs);
 }
 
-/* Una sola línea: un motivo largo no puede cambiar la altura de la fila. */
 .motivo {
   display: block;
-  max-width: 46ch;
+  max-width: 42ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -42,10 +91,12 @@
 }
 
 .sugerencia {
-  margin-top: var(--e-2);
-  padding: var(--e-2);
+  margin-top: var(--e-3);
+  padding: var(--e-3);
   background: var(--superficie-2);
   border: 1px solid var(--borde);
   border-radius: var(--r-2);
   font-size: var(--t-sm);
+  color: var(--texto-2);
+  line-height: var(--interlinea);
 }

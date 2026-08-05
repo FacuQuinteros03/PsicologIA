@@ -82,10 +82,20 @@
     {
       "label": "■ Detener todo",
       "type": "shell",
-      // Mata lo que esté escuchando en 8000 y 3000. Resuelve el caso de un
-      // `next dev` huérfano de una sesión anterior, que hace que el siguiente
-      // arranque se corra solo al 3001 y el front quede apuntando a otro lado.
-      "command": "docker compose stop; Get-NetTCPConnection -LocalPort 3000,8000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }",
+      // Mata por línea de comandos, NO por dueño del puerto.
+      //
+      // `uvicorn --reload` corre en dos procesos: el reloader vigila los
+      // archivos y un hijo es el que sirve. El socket de escucha lo abre el
+      // padre y lo hereda el hijo, así que netstat se lo atribuye al padre.
+      // Matar sólo a ese dueño deja al hijo vivo, sirviendo, con la config
+      // vieja en memoria y quedándose con el puerto: netstat pasa a mostrar un
+      // listener de un PID que ya no existe. Windows permite varios sockets en
+      // el mismo puerto y reparte las conexiones entre todos, así que con
+      // huérfanos dando vueltas una request responde en 5 ms y la siguiente
+      // se cuelga, según a cuál le toque.
+      //
+      // El filtro por 'PsicoIA' evita tocar cualquier otro node o python.
+      "command": "docker compose stop; Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'PsicoIA' -and $_.CommandLine -match 'uvicorn|next' } | ForEach-Object { & taskkill /F /T /PID $_.ProcessId 2>$null }; Get-NetTCPConnection -LocalPort 3000,8000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { & taskkill /F /T /PID $_ 2>$null }",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": [],
       "presentation": { "reveal": "silent", "panel": "shared" }
