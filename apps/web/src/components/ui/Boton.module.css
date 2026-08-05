@@ -1,5 +1,3 @@
-/* Botón. Todos los valores salen de los tokens de `app/globals.css`. */
-
 .boton {
   display: inline-flex;
   align-items: center;
@@ -22,6 +20,7 @@
   transition:
     background-color var(--transicion),
     border-color var(--transicion),
+    box-shadow var(--transicion),
     color var(--transicion);
 }
 
@@ -48,8 +47,9 @@
   color: var(--texto);
 }
 .secundario:hover:not(:disabled) {
-  background: var(--superficie-2);
-  border-color: var(--borde-fuerte);
+  background: var(--acento-suave); /* Celeste pastel sutil */
+  border-color: var(--acento-borde);
+  color: var(--acento);
 }
 
 .sutil {
@@ -58,8 +58,8 @@
   color: var(--texto-2);
 }
 .sutil:hover:not(:disabled) {
-  background: var(--superficie-3);
-  color: var(--texto);
+  background: var(--acento-suave);
+  color: var(--acento);
 }
 
 .peligro {
@@ -76,13 +76,12 @@
 
 .sm {
   height: var(--alto-control-sm);
-  padding: 0 var(--e-2);
+  padding: 0 var(--e-3);
   font-size: var(--t-sm);
   gap: var(--e-1);
 }
 
 .md {
-  /* Valores del bloque base. Existe para poder sobrescribirlo por si acaso. */
   height: var(--alto-control);
 }
 
@@ -90,13 +89,10 @@
   width: 100%;
 }
 
-/* --- Interior ------------------------------------------------------------ */
-
 .icono {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Ancho fijo: el texto no se mueve al alternar icono/indicador. */
   width: 14px;
   height: 14px;
   flex: 0 0 auto;
@@ -112,8 +108,6 @@
   display: inline-block;
 }
 
-/* Indicador de carga: un aro que gira. Es feedback de estado, no decoración,
-   así que se mantiene aunque el sistema pida menos movimiento (sólo se frena). */
 .indicador {
   width: 12px;
   height: 12px;

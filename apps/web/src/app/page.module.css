@@ -30,7 +30,7 @@
 .heroEtiqueta {
   font-size: var(--t-xs);
   font-weight: var(--peso-fuerte);
-  color: var(--alerta);
+  color: var(--acento);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

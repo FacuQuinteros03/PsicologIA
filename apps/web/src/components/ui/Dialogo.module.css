@@ -1,27 +1,31 @@
 .dialogo {
   padding: 0;
-  width: min(440px, calc(100vw - 2 * var(--e-4)));
+  width: min(460px, calc(100vw - 2 * var(--e-4)));
 
   background: var(--superficie);
-  border: 1px solid var(--borde-fuerte);
+  border: 1px solid var(--borde);
   border-radius: var(--r-3);
   color: var(--texto);
+  box-shadow: 0 8px 32px rgba(43, 42, 41, 0.12);
+  overflow: hidden;
 }
 
-/* Fondo sólido con opacidad, sin blur. */
 .dialogo::backdrop {
-  background: rgb(0 0 0 / 0.45);
+  background: rgba(43, 42, 41, 0.35);
+  backdrop-filter: blur(2px);
 }
 
 .contenido {
   display: flex;
   flex-direction: column;
   gap: var(--e-3);
-  padding: var(--e-4);
+  padding: var(--e-5);
 }
 
 .titulo {
   font-size: var(--t-lg);
+  font-weight: var(--peso-fuerte);
+  color: var(--texto);
 }
 
 .cuerpo {
@@ -35,6 +39,6 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--e-2);
-  padding-top: var(--e-2);
+  padding-top: var(--e-3);
   border-top: 1px solid var(--borde);
 }

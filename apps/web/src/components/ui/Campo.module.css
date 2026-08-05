@@ -6,14 +6,14 @@
 }
 
 .etiqueta {
-  font-size: var(--t-sm);
-  font-weight: var(--peso-medio);
+  font-size: var(--t-xs);
+  font-weight: var(--peso-fuerte);
   color: var(--texto-2);
 }
 
 .control {
   height: var(--alto-control);
-  padding: 0 var(--e-2);
+  padding: 0 var(--e-3);
   width: 100%;
 
   background: var(--superficie);
@@ -23,7 +23,10 @@
   color: var(--texto);
   font-size: var(--t-base);
 
-  transition: border-color var(--transicion);
+  transition:
+    border-color var(--transicion),
+    background-color var(--transicion),
+    box-shadow var(--transicion);
 }
 
 .control::placeholder {
@@ -32,6 +35,14 @@
 
 .control:hover:not(:disabled) {
   border-color: var(--borde-fuerte);
+  background-color: var(--acento-suave);
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 3px var(--acento-borde);
+  background-color: var(--superficie);
 }
 
 .control:disabled {
@@ -47,7 +58,7 @@
 .area {
   height: auto;
   min-height: 96px;
-  padding: var(--e-2);
+  padding: var(--e-2) var(--e-3);
   line-height: var(--interlinea);
   resize: vertical;
   font-family: inherit;

@@ -1,13 +1,13 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--e-1);
+  gap: 6px;
 
-  height: 20px;
+  height: 22px;
   padding: 0 var(--e-2);
 
   border: 1px solid;
-  border-radius: var(--r-1);
+  border-radius: 999px; /* Píldora curva Notion */
 
   font-size: var(--t-xs);
   font-weight: var(--peso-medio);
@@ -16,8 +16,8 @@
 }
 
 .punto {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: currentColor;
   flex: 0 0 auto;

@@ -1,30 +1,30 @@
 /* =============================================================================
-   PsicoIA — Design tokens (Warm Mindfulness & Notion-Inspired)
+   PsicoIA — Design tokens (Mindful Sky & Warm Notion-Inspired)
    ============================================================================= */
 
 :root {
-  /* --- Superficies Cálidas & Orgánicas ------------------------------------ */
-  --fondo: #faf8f5; /* Arena / Crema muy suave */
-  --superficie: #ffffff; /* Blanco puro para tarjetas elevadas */
-  --superficie-2: #f3efea; /* Zonas de contraste suave / Badges */
-  --superficie-3: #eae4dc; /* Hover suave */
+  /* --- Superficies Cálidas & Orgánicas (Chau grises fríos/viejos) -------------- */
+  --fondo: #faf8f5; /* Arena / Marfil muy suave */
+  --superficie: #ffffff;
+  --superficie-2: #f5f2ec; /* Marfil tenue en lugar de gris #f6f6f7 */
+  --superficie-3: #f0f7fc; /* Celeste pastel para hovers */
 
-  /* Destacado estilo Notion Banner */
-  --superficie-destacada: #fff8e7;
-  --borde-destacado: #e2d1a3;
+  /* Destacado Hero Notion (Celeste brisa / Mente Calma - Sin amarillo) */
+  --superficie-destacada: #f2f7fa;
+  --borde-destacado: #d0e2ee;
 
-  --borde: #e6e1da; /* Bordes tenues y cálidos */
-  --borde-fuerte: #d1c9bf;
+  --borde: #e6e2da; /* Bordes cálidos y finos */
+  --borde-fuerte: #cfc9be;
 
-  --texto: #2d2b2a; /* Carbón suave (evita el negro puro para reducir fatiga visual) */
-  --texto-2: #65615d; /* Gris tierra secundario */
-  --texto-3: #99938c; /* Muted */
+  --texto: #2b2a29; /* Carbón orgánico suave (reduce fatiga visual) */
+  --texto-2: #63605b; /* Texto secundario cálido */
+  --texto-3: #96918a; /* Muted / Deshabilitado */
 
-  /* --- Acento Mindful (Sage / Verde Salvia Clinico) ---------------------- */
-  --acento: #2e5a44; /* Verde bosque / salvia profundo */
-  --acento-hover: #224433;
-  --acento-suave: #edf3ef; /* Fondo suave para seleccionados / IA */
-  --acento-borde: #b7d1c2;
+  /* --- Acento Celeste / Azul Sereno (Espacio Seguro) ----------------------- */
+  --acento: #1d638b; /* Azul celeste sereno y legible */
+  --acento-hover: #154d6e;
+  --acento-suave: #f0f7fc; /* Tinte celeste muy sutil para hovers y seleccionados */
+  --acento-borde: #bde0f5;
   --sobre-acento: #ffffff;
 
   /* --- Estados Agradables ------------------------------------------------ */
@@ -32,16 +32,16 @@
   --exito-suave: #eaf5ee;
   --exito-borde: #b4dfc4;
 
-  --alerta: #b45309;
-  --alerta-suave: #fef3c7;
-  --alerta-borde: #fde68a;
+  --alerta: #c06d1a; /* Ámbar cálido (sólo para alertas reales) */
+  --alerta-suave: #fdf8ed;
+  --alerta-borde: #f4e2b8;
 
-  --peligro: #9f2a2a;
+  --peligro: #b83232;
   --peligro-suave: #fdf2f2;
-  --peligro-borde: #f87171;
+  --peligro-borde: #f5b8b8;
 
-  --neutro-estado: #65615d;
-  --neutro-suave: #f3efea;
+  --neutro-estado: #63605b;
+  --neutro-suave: #f5f2ec;
 
   /* --- Foco & Navegación ------------------------------------------------- */
   --foco: var(--acento);
@@ -77,18 +77,17 @@
   --e-6: 32px;
   --e-7: 48px;
 
-  /* --- Formas Amables (Estilo Notion / Apple) ---------------------------- */
+  /* --- Formas & Sombras -------------------------------------------------- */
   --r-1: 6px;
   --r-2: 10px;
-  --r-3: 16px; /* Esquinas redondeadas y orgánicas */
+  --r-3: 14px;
   --borde-fino: 1px solid var(--borde);
 
-  /* Sombras ligeras y orgánicas */
   --sombra-sutil:
-    0 1px 3px rgba(45, 43, 42, 0.04), 0 4px 12px rgba(45, 43, 42, 0.02);
-  --sombra-tarjeta: 0 2px 8px rgba(45, 43, 42, 0.05);
+    0 1px 3px rgba(43, 42, 41, 0.04), 0 4px 12px rgba(43, 42, 41, 0.02);
+  --sombra-tarjeta: 0 2px 8px rgba(43, 42, 41, 0.05);
 
-  --alto-control: 36px; /* Se incrementa ligeramente para mejor accesibilidad */
+  --alto-control: 36px;
   --alto-control-sm: 28px;
   --alto-fila: 44px;
   --alto-barra: 54px;
@@ -96,57 +95,31 @@
   --transicion: 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Dark Mode Cálido (Noche Suave / Basalto) -----------------------------
-   DESACTIVADO A PROPÓSITO. Este bloque estuvo como
-   `@media (prefers-color-scheme: dark)`, así que se aplicaba solo con que
-   Windows estuviera en tema oscuro y tapaba toda la paleta clara de arriba.
-
-   Al colgarlo de `[data-theme="dark"]` la paleta sigue acá, completa y lista,
-   pero no se activa hasta que algo escriba ese atributo en el <html>. Hoy nada
-   lo escribe, así que la app es siempre clara.
-
-   Para encenderlo cuando llegue el selector de paletas:
-       document.documentElement.dataset.theme = 'dark';
-   ------------------------------------------------------------------------- */
+/* --- Dark Mode Controlado por Atributo (No por sistema operativo) ----------- */
 :root[data-theme="dark"] {
-    --fondo: #141413; /* No es negro puro, es gris calido profundo */
-    --superficie: #1c1b1a;
-    --superficie-2: #262523;
-    --superficie-3: #31302d;
+  --fondo: #121518;
+  --superficie: #1a1e23;
+  --superficie-2: #22272e;
+  --superficie-3: #2b323b;
 
-    --superficie-destacada: #282319;
-    --borde-destacado: #4d4129;
+  --superficie-destacada: #16222b;
+  --borde-destacado: #274355;
 
-    --borde: #2e2c2a;
-    --borde-fuerte: #45423e;
+  --borde: #2a313a;
+  --borde-fuerte: #3f4956;
 
-    --texto: #eceae6;
-    --texto-2: #b3afab;
-    --texto-3: #827e7a;
+  --texto: #ecf1f5;
+  --texto-2: #a5b0bc;
+  --texto-3: #758190;
 
-    --acento: #6a9e80; /* Verde salvia claro iluminado */
-    --acento-hover: #83b397;
-    --acento-suave: #192620;
-    --acento-borde: #2d4d3a;
-    --sobre-acento: #0e1a14;
+  --acento: #58a6df;
+  --acento-hover: #7ec0ee;
+  --acento-suave: #132431;
+  --acento-borde: #234762;
+  --sobre-acento: #0a1620;
 
-    --exito: #52b788;
-    --exito-suave: #14281e;
-    --exito-borde: #21523b;
-
-    --alerta: #f59e0b;
-    --alerta-suave: #2c200c;
-    --alerta-borde: #594014;
-
-    --peligro: #e57373;
-    --peligro-suave: #2a1717;
-    --peligro-borde: #5c2323;
-
-    --neutro-estado: #b3afab;
-    --neutro-suave: #262523;
-
-    --sombra-sutil: 0 1px 3px rgba(0, 0, 0, 0.2);
-    --sombra-tarjeta: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --sombra-sutil: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --sombra-tarjeta: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 *,
@@ -208,6 +181,58 @@ textarea,
 select {
   font: inherit;
   color: inherit;
+}
+
+/* =============================================================================
+   Estilos base para Controles e Inputs (Alineación y Selects Custom)
+   ========================================================================== */
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+  height: var(--alto-control);
+  padding: 0 var(--e-3);
+  background-color: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--r-2);
+  color: var(--texto);
+  font-size: var(--t-base);
+  transition:
+    border-color var(--transicion),
+    box-shadow var(--transicion),
+    background-color var(--transicion);
+}
+
+input[type="text"]:hover,
+input[type="search"]:hover,
+select:hover {
+  border-color: var(--borde-fuerte);
+  background-color: var(--acento-suave); /* Hover celeste sutilísimo */
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 3px var(--acento-borde);
+  background-color: var(--superficie);
+}
+
+/* Selects Personalizados (Remueve flecha por defecto del navegador) */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: var(--e-6);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2363605B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--e-2) center;
+  background-size: 14px;
 }
 
 a {
