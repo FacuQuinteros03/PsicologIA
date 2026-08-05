@@ -61,7 +61,6 @@ class Paciente(UUIDMixin, TimestampMixin, table=True):
 
     # --- Encuadre clínico ---
     motivo_consulta: str | None = Field(default=None, sa_type=Text)
-    derivado_por: str | None = Field(default=None, max_length=200)
     fecha_inicio: date | None = Field(default=None)
     modalidad: Modalidad = Field(
         default=Modalidad.PRESENCIAL,

@@ -83,7 +83,6 @@ export interface PacienteDetalle extends Paciente {
   telefono_emergencia: string | null;
   obra_social: string | null;
   numero_afiliado: string | null;
-  derivado_por: string | null;
   fecha_inicio: string | null;
   honorarios: string | null;
   notas_administrativas: string | null;
@@ -108,7 +107,6 @@ export interface PacienteNuevo {
   obra_social?: string | null;
   numero_afiliado?: string | null;
   motivo_consulta?: string | null;
-  derivado_por?: string | null;
   fecha_inicio?: string | null;
   modalidad?: Modalidad;
   frecuencia?: Frecuencia;

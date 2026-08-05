@@ -33,7 +33,6 @@ interface Campos {
   obra_social: string;
   numero_afiliado: string;
   motivo_consulta: string;
-  derivado_por: string;
   fecha_inicio: string;
   modalidad: Modalidad;
   frecuencia: Frecuencia;
@@ -46,7 +45,7 @@ const VACIO: Campos = {
   nombre: '', apellido: '', documento: '', fecha_nacimiento: '',
   genero: 'desconocido', ocupacion: '', email: '', telefono: '',
   contacto_emergencia: '', telefono_emergencia: '', obra_social: '',
-  numero_afiliado: '', motivo_consulta: '', derivado_por: '',
+  numero_afiliado: '', motivo_consulta: '',
   fecha_inicio: '', modalidad: 'presencial', frecuencia: 'semanal',
   honorarios: '', notas_administrativas: '', estado: 'activo',
 };
@@ -66,7 +65,6 @@ function desdePaciente(paciente: PacienteDetalle): Campos {
     obra_social: paciente.obra_social ?? '',
     numero_afiliado: paciente.numero_afiliado ?? '',
     motivo_consulta: paciente.motivo_consulta ?? '',
-    derivado_por: paciente.derivado_por ?? '',
     fecha_inicio: paciente.fecha_inicio ?? '',
     modalidad: paciente.modalidad,
     frecuencia: paciente.frecuencia,
@@ -94,7 +92,6 @@ function aPayload(campos: Campos, modoEdicion: boolean): DatosPaciente {
     obra_social: opcional(campos.obra_social),
     numero_afiliado: opcional(campos.numero_afiliado),
     motivo_consulta: opcional(campos.motivo_consulta),
-    derivado_por: opcional(campos.derivado_por),
     fecha_inicio: opcional(campos.fecha_inicio),
     modalidad: campos.modalidad,
     frecuencia: campos.frecuencia,
@@ -247,12 +244,6 @@ export function FormularioPaciente({
 
       <Panel titulo="Encuadre del tratamiento">
         <div className={estilos.grilla}>
-          <Campo
-            etiqueta="Derivado por"
-            value={campos.derivado_por}
-            onChange={(e) => set('derivado_por', e.target.value)}
-            autoComplete="off"
-          />
           <Campo
             etiqueta="Inicio del tratamiento"
             type="date"

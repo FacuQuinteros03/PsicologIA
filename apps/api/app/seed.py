@@ -77,7 +77,6 @@ async def sembrar() -> None:
                     obra_social="OSDE",
                     numero_afiliado="62-1234567-01",
                     motivo_consulta="Ansiedad laboral y conflictos con la familia de origen.",
-                    derivado_por="Dra. Pérez (clínica)",
                     fecha_inicio=date(2026, 6, 1),
                     modalidad=Modalidad.MIXTA,
                     frecuencia=Frecuencia.SEMANAL,

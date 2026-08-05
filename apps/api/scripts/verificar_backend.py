@@ -218,7 +218,7 @@ async def main() -> int:
             "telefono": "11 4444-0000", "contacto_emergencia": "Alguien",
             "telefono_emergencia": "11 4444-1111", "obra_social": "Swiss Medical",
             "numero_afiliado": "AB-999", "motivo_consulta": "Consulta de prueba.",
-            "derivado_por": "Derivación de prueba", "fecha_inicio": "2026-07-01",
+            "fecha_inicio": "2026-07-01",
             "modalidad": "virtual", "frecuencia": "quincenal",
             "honorarios": "18500.50", "notas_administrativas": "Nota administrativa.",
         }
@@ -229,7 +229,9 @@ async def main() -> int:
         nuevo_id = creado["id"]
 
         faltantes = [c for c in ficha if creado.get(c) in (None, "")]
-        check(not faltantes, "Persiste los 19 campos de la ficha",
+        # El total sale de `ficha` y no de un número escrito a mano: agregar o
+        # sacar un campo de la admisión no deja el título del check mintiendo.
+        check(not faltantes, f"Persiste los {len(ficha)} campos de la ficha",
               f"vacíos: {faltantes}" if faltantes else "ninguno vino vacío")
         check(creado.get("edad") == 36, "Calcula la edad desde la fecha de nacimiento",
               f"edad={creado.get('edad')}")

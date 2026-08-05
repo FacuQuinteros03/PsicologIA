@@ -42,7 +42,6 @@ class PacienteBase(BaseModel):
 
     # --- Encuadre ---
     motivo_consulta: str | None = None
-    derivado_por: str | None = Field(default=None, max_length=200)
     fecha_inicio: date | None = None
     modalidad: Modalidad = Modalidad.PRESENCIAL
     frecuencia: Frecuencia = Frecuencia.SEMANAL
@@ -79,7 +78,6 @@ class PacienteActualizar(BaseModel):
     numero_afiliado: str | None = Field(default=None, max_length=80)
 
     motivo_consulta: str | None = None
-    derivado_por: str | None = Field(default=None, max_length=200)
     fecha_inicio: date | None = None
     modalidad: Modalidad | None = None
     frecuencia: Frecuencia | None = None
@@ -119,7 +117,6 @@ class PacienteDetalle(PacienteRespuesta):
     telefono_emergencia: str | None
     obra_social: str | None
     numero_afiliado: str | None
-    derivado_por: str | None
     fecha_inicio: date | None
     honorarios: Decimal | None
     notas_administrativas: str | None
