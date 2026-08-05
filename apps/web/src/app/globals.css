@@ -96,9 +96,19 @@
   --transicion: 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Dark Mode Cálido (Noche Suave / Basalto) ----------------------------- */
-@media (prefers-color-scheme: dark) {
-  :root {
+/* --- Dark Mode Cálido (Noche Suave / Basalto) -----------------------------
+   DESACTIVADO A PROPÓSITO. Este bloque estuvo como
+   `@media (prefers-color-scheme: dark)`, así que se aplicaba solo con que
+   Windows estuviera en tema oscuro y tapaba toda la paleta clara de arriba.
+
+   Al colgarlo de `[data-theme="dark"]` la paleta sigue acá, completa y lista,
+   pero no se activa hasta que algo escriba ese atributo en el <html>. Hoy nada
+   lo escribe, así que la app es siempre clara.
+
+   Para encenderlo cuando llegue el selector de paletas:
+       document.documentElement.dataset.theme = 'dark';
+   ------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
     --fondo: #141413; /* No es negro puro, es gris calido profundo */
     --superficie: #1c1b1a;
     --superficie-2: #262523;
@@ -137,7 +147,6 @@
 
     --sombra-sutil: 0 1px 3px rgba(0, 0, 0, 0.2);
     --sombra-tarjeta: 0 4px 16px rgba(0, 0, 0, 0.3);
-  }
 }
 
 *,
