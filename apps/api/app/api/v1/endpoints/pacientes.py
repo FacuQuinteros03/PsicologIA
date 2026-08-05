@@ -23,6 +23,7 @@ from app.schemas.paciente import (
     PacienteCrear,
     PacienteDetalle,
     PacienteRespuesta,
+    RecordatorioCrear,
     RecordatorioRespuesta,
 )
 from app.schemas.sesion import SesionResumen, TagConteo
@@ -266,3 +267,31 @@ async def listar_recordatorios(
         consulta = consulta.where(col(Recordatorio.resuelto).is_(False))
     resultado = await sesion_db.exec(consulta.order_by(col(Recordatorio.created_at).desc()))
     return list(resultado.all())
+
+
+@router.post(
+    "/{paciente_id}/recordatorios",
+    response_model=RecordatorioRespuesta,
+    status_code=status.HTTP_201_CREATED,
+)
+async def crear_recordatorio(
+    paciente_id: uuid.UUID,
+    datos: RecordatorioCrear,
+    sesion_db: SesionDB,
+    terapeuta: TerapeutaActual,
+):
+    """Carga un recordatorio a mano.
+
+    Queda con `sesion_id` en NULL: no salió del procesamiento de notas de ninguna
+    sesión, salió de que el terapeuta lo anotó.
+    """
+    paciente = await obtener_paciente_propio(sesion_db, paciente_id, terapeuta)
+    recordatorio = Recordatorio(
+        paciente_id=paciente.id,
+        texto=datos.texto.strip(),
+        prioridad=datos.prioridad,
+    )
+    sesion_db.add(recordatorio)
+    await sesion_db.commit()
+    await sesion_db.refresh(recordatorio)
+    return recordatorio

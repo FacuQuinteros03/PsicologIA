@@ -92,6 +92,12 @@ export const ETIQUETA_PRIORIDAD: Record<Prioridad, string> = {
   baja: 'Baja',
 };
 
+/** Derivado de las etiquetas: agregar una prioridad nueva actualiza las dos cosas.
+ *  El orden es el de urgencia, que es como se lee en un desplegable. */
+export const PRIORIDADES: readonly OpcionSelect<Prioridad>[] = (
+  ['alta', 'media', 'baja'] as const
+).map((valor) => ({ valor, etiqueta: ETIQUETA_PRIORIDAD[valor] }));
+
 /** Formatea un importe como pesos argentinos. */
 const PESOS = new Intl.NumberFormat('es-AR', {
   style: 'currency',

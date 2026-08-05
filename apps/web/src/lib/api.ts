@@ -18,6 +18,8 @@ import type {
   PacienteNuevo,
   ProcesarNotas,
   Recordatorio,
+  RecordatorioCambios,
+  RecordatorioNuevo,
   SesionDetalle,
   SesionResumen,
   TagConteo,
@@ -140,8 +142,30 @@ export const api = {
 
   nubeDeTags: (pacienteId: string) => pedir<TagConteo[]>(`${V1}/pacientes/${pacienteId}/tags`),
 
-  recordatorios: (pacienteId: string) =>
-    pedir<Recordatorio[]>(`${V1}/pacientes/${pacienteId}/recordatorios`),
+  // --- Recordatorios ---
+  recordatorios: (pacienteId: string, soloPendientes = true) =>
+    pedir<Recordatorio[]>(
+      conParams(`${V1}/pacientes/${pacienteId}/recordatorios`, {
+        // Se manda sólo cuando hay que apagar el default del backend, que ya es
+        // `true`. `conParams` toma strings, igual que `incluir_archivados`.
+        solo_pendientes: soloPendientes ? undefined : 'false',
+      }),
+    ),
+
+  crearRecordatorio: (pacienteId: string, datos: RecordatorioNuevo) =>
+    pedir<Recordatorio>(`${V1}/pacientes/${pacienteId}/recordatorios`, {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
+
+  actualizarRecordatorio: (id: string, cambios: RecordatorioCambios) =>
+    pedir<Recordatorio>(`${V1}/recordatorios/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(cambios),
+    }),
+
+  eliminarRecordatorio: (id: string) =>
+    pedir<void>(`${V1}/recordatorios/${id}`, { method: 'DELETE' }),
 
   // --- Sesiones ---
   obtenerSesion: (id: string) => pedir<SesionDetalle>(`${V1}/sesiones/${id}`),

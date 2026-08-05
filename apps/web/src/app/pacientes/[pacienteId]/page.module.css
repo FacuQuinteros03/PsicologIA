@@ -61,7 +61,7 @@
   grid-template-rows: minmax(280px, 1fr) minmax(220px, 0.85fr);
   grid-template-areas:
     'genograma lateral'
-    'historial lateral';
+    'historial recordatorios';
   gap: var(--e-4);
   flex: 1 1 auto;
   min-height: 0;
@@ -82,14 +82,20 @@
   min-height: 0;
 }
 
+.panelRecordatorios {
+  grid-area: recordatorios;
+  min-height: 0;
+}
+
 /* En pantallas angostas se pasa a una sola columna y la página scrollea. */
 @media (max-width: 1000px) {
   .grilla {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 420px 320px 420px;
+    grid-template-rows: 420px 320px 360px 420px;
     grid-template-areas:
       'genograma'
       'lateral'
+      'recordatorios'
       'historial';
   }
 

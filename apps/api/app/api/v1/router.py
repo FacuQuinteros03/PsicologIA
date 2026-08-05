@@ -2,9 +2,10 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import genograma, pacientes, sesiones
+from app.api.v1.endpoints import genograma, pacientes, recordatorios, sesiones
 
 router = APIRouter()
 router.include_router(pacientes.router)
 router.include_router(sesiones.router)
 router.include_router(genograma.router)
+router.include_router(recordatorios.router)

@@ -1,0 +1,162 @@
+/* Panel de recordatorios.
+   Ningún color literal: todo sale de las variables de `app/globals.css`. */
+
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+/* --- Alta rápida ---------------------------------------------------------- */
+
+.alta {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  padding: var(--e-3);
+  border-bottom: 1px solid var(--borde);
+  flex: 0 0 auto;
+}
+
+.campoTexto {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.campoPrioridad {
+  width: 104px;
+  flex: 0 0 auto;
+}
+
+.error {
+  margin: var(--e-2) var(--e-3) 0;
+  padding: var(--e-2) var(--e-3);
+  background: var(--peligro-suave);
+  border: 1px solid var(--peligro-borde);
+  border-radius: var(--r-2);
+  color: var(--peligro);
+  font-size: var(--t-sm);
+}
+
+/* --- Lista ---------------------------------------------------------------- */
+
+.lista {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.fila {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-3);
+  padding: var(--e-3);
+  border-bottom: 1px solid var(--borde);
+  transition: background-color var(--transicion);
+}
+
+.fila:last-child {
+  border-bottom: none;
+}
+
+.fila:hover {
+  background: var(--acento-suave);
+}
+
+/* Resuelto: se atenúa y se tacha, pero sigue legible. No se oculta —el
+   terapeuta tiene que poder releer qué se cerró y cuándo. */
+.filaResuelta .texto {
+  color: var(--texto-3);
+  text-decoration: line-through;
+}
+
+.check {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex: 0 0 auto;
+  accent-color: var(--acento);
+  cursor: pointer;
+}
+
+.check:disabled {
+  cursor: progress;
+}
+
+.cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-1);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.texto {
+  color: var(--texto);
+  font-size: var(--t-base);
+  line-height: var(--interlinea-ajustada);
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  flex-wrap: wrap;
+}
+
+.fecha {
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+}
+
+/* Marca de origen: distingue lo que anotó el terapeuta de lo que infirió la IA. */
+.origen {
+  padding: 1px 6px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+}
+
+/* El botón de borrar aparece al pasar por la fila, pero SIEMPRE ocupa su lugar:
+   con `display: none` la fila se reacomodaría al hacer hover. */
+.borrar {
+  flex: 0 0 auto;
+  opacity: 0;
+  transition: opacity var(--transicion);
+}
+
+.fila:hover .borrar,
+.borrar:focus-visible {
+  opacity: 1;
+}
+
+/* --- Pie ------------------------------------------------------------------ */
+
+.verTodos {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  padding: var(--e-2) var(--e-3);
+  border-top: 1px solid var(--borde);
+  color: var(--texto-2);
+  font-size: var(--t-sm);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.verTodos input {
+  accent-color: var(--acento);
+  cursor: pointer;
+}
+
+/* Sin mouse el botón nunca se revelaría: al navegar con Tab tiene que verse. */
+@media (hover: none) {
+  .borrar {
+    opacity: 1;
+  }
+}

@@ -133,8 +133,29 @@ class RecordatorioRespuesta(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
-    sesion_id: uuid.UUID
+    # None en los que carga el terapeuta a mano: no vienen de ninguna sesión.
+    sesion_id: uuid.UUID | None
     texto: str
     prioridad: Prioridad
     resuelto: bool
+    resuelto_at: datetime | None
     created_at: datetime
+
+
+class RecordatorioCrear(BaseModel):
+    """Alta manual. No todo lo que hay que recordar sale del procesamiento de notas."""
+
+    texto: str = Field(min_length=1, max_length=1000)
+    prioridad: Prioridad = Prioridad.MEDIA
+
+
+class RecordatorioActualizar(BaseModel):
+    """Todo opcional: lo que no se manda queda intacto.
+
+    El caso frecuente es `{"resuelto": true}` al cerrar el punto en sesión, pero
+    también se puede corregir el texto o la prioridad de uno que infirió la IA.
+    """
+
+    texto: str | None = Field(default=None, min_length=1, max_length=1000)
+    prioridad: Prioridad | None = None
+    resuelto: bool | None = None

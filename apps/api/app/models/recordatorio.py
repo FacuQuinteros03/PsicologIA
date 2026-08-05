@@ -8,7 +8,7 @@ dolor evitable.
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import DateTime, Index, Text, text
 from sqlalchemy.sql import func
@@ -32,7 +32,11 @@ class Recordatorio(UUIDMixin, table=True):
         ),
     )
 
-    sesion_id: uuid.UUID = Field(
+    # Nullable: es la sesión donde SE ORIGINÓ el recordatorio, y los que carga
+    # el terapeuta a mano no vienen de ninguna. El dueño del recordatorio es el
+    # paciente, no la sesión.
+    sesion_id: uuid.UUID | None = Field(
+        default=None,
         foreign_key="sesiones.id",
         index=True,
         ondelete="CASCADE",
@@ -60,4 +64,7 @@ class Recordatorio(UUIDMixin, table=True):
         sa_column_kwargs={"server_default": func.now()},
     )
 
-    sesion: "Sesion" = Relationship(back_populates="recordatorios")
+    # `Optional["Sesion"]` y NO `"Sesion | None"`: SQLAlchemy resuelve la
+    # anotación de un Relationship como nombre de clase, y la union escrita con
+    # `|` la busca literalmente como si fuera una clase llamada "Sesion | None".
+    sesion: Optional["Sesion"] = Relationship(back_populates="recordatorios")  # noqa: UP045

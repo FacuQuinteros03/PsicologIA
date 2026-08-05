@@ -280,6 +280,52 @@ async def main() -> int:
         r = await cli.get(f"/api/v1/pacientes/{nuevo_id}")
         check(r.status_code == 404, "El paciente borrado ya no existe")
 
+        # ---------- Recordatorios ----------
+        print("\nRECORDATORIOS")
+        r = await cli.post(f"/api/v1/pacientes/{paciente_id}/recordatorios",
+                           json={"texto": "Traer el informe escolar", "prioridad": "alta"})
+        creado_rec = r.json() if r.status_code == 201 else {}
+        if not check(r.status_code == 201, "POST crea uno a mano", f"HTTP {r.status_code} {r.text[:120]}"):
+            return 1
+        rec_id = creado_rec["id"]
+        check(creado_rec.get("sesion_id") is None,
+              "El manual queda sin sesión de origen", f"sesion_id={creado_rec.get('sesion_id')}")
+        check(creado_rec.get("resuelto") is False and creado_rec.get("resuelto_at") is None,
+              "Nace pendiente y sin fecha de cierre")
+
+        r = await cli.get(f"/api/v1/pacientes/{paciente_id}/recordatorios")
+        pendientes_antes = len(r.json())
+        check(any(x["id"] == rec_id for x in r.json()),
+              "Aparece entre los pendientes", f"{pendientes_antes} pendientes")
+
+        # El corazón del asunto: hasta ahora `resuelto` no se podía cambiar.
+        r = await cli.patch(f"/api/v1/recordatorios/{rec_id}", json={"resuelto": True})
+        marcado = r.json() if r.status_code == 200 else {}
+        check(r.status_code == 200 and marcado.get("resuelto") is True,
+              "PATCH lo marca resuelto", f"HTTP {r.status_code}")
+        check(marcado.get("resuelto_at") is not None,
+              "El servidor sella la fecha de cierre", str(marcado.get("resuelto_at"))[:19])
+
+        r = await cli.get(f"/api/v1/pacientes/{paciente_id}/recordatorios")
+        check(len(r.json()) == pendientes_antes - 1,
+              "Sale de la lista de pendientes", f"{pendientes_antes} -> {len(r.json())}")
+        r = await cli.get(f"/api/v1/pacientes/{paciente_id}/recordatorios?solo_pendientes=false")
+        check(any(x["id"] == rec_id for x in r.json()), "Pero sigue existiendo en el historial")
+
+        r = await cli.patch(f"/api/v1/recordatorios/{rec_id}", json={"resuelto": False})
+        check(r.status_code == 200 and r.json().get("resuelto_at") is None,
+              "Desmarcarlo borra la fecha vieja, no la conserva")
+
+        r = await cli.patch(f"/api/v1/recordatorios/{rec_id}", json={"prioridad": "baja"})
+        corregido = r.json() if r.status_code == 200 else {}
+        check(corregido.get("prioridad") == "baja" and corregido.get("texto") == "Traer el informe escolar",
+              "PATCH parcial no pisa el texto")
+
+        r = await cli.delete(f"/api/v1/recordatorios/{rec_id}")
+        check(r.status_code == 204, "DELETE lo elimina", f"HTTP {r.status_code}")
+        r = await cli.patch(f"/api/v1/recordatorios/{rec_id}", json={"resuelto": True})
+        check(r.status_code == 404, "El borrado ya no se puede modificar")
+
         # ---------- Aislamiento multi-tenant ----------
         print("\nAISLAMIENTO MULTI-TENANT")
         otro_terapeuta, otro_paciente = uuid.uuid4(), uuid.uuid4()
@@ -299,6 +345,26 @@ async def main() -> int:
         r = await cli.get("/api/v1/pacientes")
         ids = {p["id"] for p in r.json()} if r.status_code == 200 else set()
         check(str(otro_paciente) not in ids, "El listado no filtra pacientes ajenos")
+
+        # Los endpoints de recordatorio se direccionan por su propio id, no por el
+        # del paciente: sin el join contra `pacientes` bastaría conocer un UUID
+        # ajeno para cerrar o borrar el recordatorio de un paciente de otro.
+        rec_ajeno = uuid.uuid4()
+        async with AsyncSessionLocal() as db:
+            await db.exec(text(  # type: ignore[arg-type]
+                "INSERT INTO recordatorios (id, paciente_id, texto, prioridad, resuelto) "
+                "VALUES (:r, :p, 'Ajeno', 'media', false)").bindparams(r=rec_ajeno, p=otro_paciente))
+            await db.commit()
+
+        r = await cli.patch(f"/api/v1/recordatorios/{rec_ajeno}", json={"resuelto": True})
+        check(r.status_code == 404, "PATCH sobre recordatorio ajeno devuelve 404", f"HTTP {r.status_code}")
+        r = await cli.delete(f"/api/v1/recordatorios/{rec_ajeno}")
+        check(r.status_code == 404, "DELETE sobre recordatorio ajeno devuelve 404", f"HTTP {r.status_code}")
+        async with AsyncSessionLocal() as db:
+            sigue = (await db.exec(text(  # type: ignore[arg-type]
+                "SELECT resuelto FROM recordatorios WHERE id = :r").bindparams(r=rec_ajeno))).first()
+        check(sigue is not None and sigue[0] is False,
+              "Y el recordatorio ajeno quedó intacto")
 
         async with AsyncSessionLocal() as db:
             await db.exec(text("DELETE FROM terapeutas WHERE id = :i").bindparams(i=otro_terapeuta))  # type: ignore[arg-type]

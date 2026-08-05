@@ -15,7 +15,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.core.database import get_session
-from app.models import Paciente, Terapeuta
+from app.models import Paciente, Recordatorio, Terapeuta
 
 SesionDB = Annotated[AsyncSession, Depends(get_session)]
 
@@ -57,3 +57,27 @@ async def obtener_paciente_propio(
     if paciente is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Paciente no encontrado.")
     return paciente
+
+
+async def obtener_recordatorio_propio(
+    sesion: AsyncSession, recordatorio_id: uuid.UUID, terapeuta: Terapeuta
+) -> Recordatorio:
+    """Igual que `obtener_paciente_propio`, para los endpoints que se direccionan
+    por el id del recordatorio y no por el del paciente.
+
+    El join con `pacientes` es el que hace el trabajo: sin él bastaría conocer un
+    UUID ajeno para marcar resuelto —o borrar— el recordatorio de un paciente de
+    otro terapeuta. También devuelve 404 y no 403, por lo mismo de siempre.
+    """
+    resultado = await sesion.exec(
+        select(Recordatorio)
+        .join(Paciente, Paciente.id == Recordatorio.paciente_id)  # type: ignore[arg-type]
+        .where(
+            Recordatorio.id == recordatorio_id,
+            Paciente.terapeuta_id == terapeuta.id,
+        )
+    )
+    recordatorio = resultado.first()
+    if recordatorio is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Recordatorio no encontrado.")
+    return recordatorio

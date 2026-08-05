@@ -128,11 +128,25 @@ export interface FiltrosPacientes {
 
 export interface Recordatorio {
   id: string;
-  sesion_id: string;
+  /** `null` en los que carga el terapeuta a mano: no salieron de una sesión. */
+  sesion_id: string | null;
   texto: string;
   prioridad: Prioridad;
   resuelto: boolean;
+  resuelto_at: string | null;
   created_at: string;
+}
+
+export interface RecordatorioNuevo {
+  texto: string;
+  prioridad?: Prioridad;
+}
+
+/** Todo opcional: lo que no se manda queda intacto. */
+export interface RecordatorioCambios {
+  texto?: string;
+  prioridad?: Prioridad;
+  resuelto?: boolean;
 }
 
 // --- Sesiones ---------------------------------------------------------------

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { GenogramaCanvas } from '@/components/genograma/GenogramaCanvas';
 import { PanelNodo } from '@/components/genograma/PanelNodo';
+import { PanelRecordatorios } from '@/components/recordatorios/PanelRecordatorios';
 import { Badge, Boton, Campo, Estado, Panel, Tabla, Tag } from '@/components/ui';
 import type { Columna } from '@/components/ui';
 import { api, ErrorAPI } from '@/lib/api';
@@ -13,6 +14,7 @@ import type {
   Genograma,
   MencionSesion,
   Paciente,
+  Recordatorio,
   SesionResumen,
   TagConteo,
 } from '@/lib/types';
@@ -38,6 +40,12 @@ export default function PaginaPaciente() {
 
   const [tagsFiltro, setTagsFiltro] = useState<string[]>([]);
   const [busqueda, setBusqueda] = useState('');
+
+  const [recordatorios, setRecordatorios] = useState<Recordatorio[] | null>(null);
+  const [verResueltos, setVerResueltos] = useState(false);
+  // Se incrementa después de cada alta, cierre o borrado: el efecto de abajo lo
+  // observa y recarga. Evita mantener la lista a mano en cada handler.
+  const [recargaRecordatorios, setRecargaRecordatorios] = useState(0);
 
   // --- Carga inicial -------------------------------------------------------
   // Los setState van después del await: hacerlos de forma síncrona en el cuerpo
@@ -84,6 +92,29 @@ export default function PaginaPaciente() {
       vigente = false;
     };
   }, [pacienteId, tagsFiltro, busqueda]);
+
+  // --- Recordatorios --------------------------------------------------------
+  useEffect(() => {
+    if (!pacienteId) return;
+    let vigente = true;
+    (async () => {
+      try {
+        const lista = await api.recordatorios(pacienteId, !verResueltos);
+        if (vigente) setRecordatorios(lista);
+      } catch {
+        // El panel muestra sus propios errores de escritura; si falla la lectura
+        // se deja la lista vacía en vez de tumbar toda la página.
+        if (vigente) setRecordatorios([]);
+      }
+    })();
+    return () => {
+      vigente = false;
+    };
+  }, [pacienteId, verResueltos, recargaRecordatorios]);
+
+  const recargarRecordatorios = useCallback(() => {
+    setRecargaRecordatorios((n) => n + 1);
+  }, []);
 
   // --- Sesiones del nodo seleccionado --------------------------------------
   // Se guarda junto con el id del nodo que las originó. Así, al cambiar de
@@ -256,6 +287,27 @@ export default function PaginaPaciente() {
             sesiones={mencionesDelNodo}
             cargando={cargandoMenciones}
             onAbrirSesion={(id) => router.push(`/pacientes/${pacienteId}/sesion?sesion=${id}`)}
+          />
+        </Panel>
+
+        <Panel
+          className={estilos.panelRecordatorios}
+          titulo="Para la próxima"
+          meta={
+            recordatorios
+              ? `${recordatorios.filter((r) => !r.resuelto).length} pendiente${
+                  recordatorios.filter((r) => !r.resuelto).length === 1 ? '' : 's'
+                }`
+              : undefined
+          }
+          sinPadding
+        >
+          <PanelRecordatorios
+            pacienteId={pacienteId}
+            recordatorios={recordatorios}
+            onCambio={recargarRecordatorios}
+            verResueltos={verResueltos}
+            onVerResueltos={setVerResueltos}
           />
         </Panel>
 
